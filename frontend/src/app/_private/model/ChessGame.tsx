@@ -1,7 +1,16 @@
+export interface ChessGame {
+    id: number,
+    content : string;
+    gameStarted : boolean;
+    capturedWhite: any;
+    capturedBlack: any;
+    chessboard: ChessPiece[][];
+    turn : Color;
+}
+
 export interface ChessPiece {
     Type: Piece,
     Color: Color,
-    Position : Coord
 }
 
 export enum Piece {
@@ -16,9 +25,4 @@ export enum Piece {
 export enum Color {
     Black,
     White
-}
-
-export interface Coord {
-    x: number,
-    y: number
 }

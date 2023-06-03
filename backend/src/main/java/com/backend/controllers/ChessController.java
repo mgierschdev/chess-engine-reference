@@ -10,68 +10,84 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 public class ChessController {
-    private final AtomicLong counter = new AtomicLong();
+    private final AtomicLong requestCount = new AtomicLong();
     private ChessGame chessGame;
 
+    private ChessGameResponse chessGameResponse;
+
+    public ChessController(){
+        chessGameResponse = new ChessGameResponse();
+    }
+
     @GetMapping("/startGame")
-    public MessageResponseRequest startGame() {
+    public ChessGameResponse startGame() {
         if(chessGame != null){
-            return new MessageResponseRequest(counter.incrementAndGet(), String.format(Log.ChessGame.gameAlreadyStarted, chessGame.uid));
+           SetChessResponse();
+           chessGameResponse.content= String.format(Log.ChessGame.gameAlreadyStarted, chessGame.uid);
+           return chessGameResponse;
         }
         chessGame = new ChessGame();
-        return new MessageResponseRequest(counter.incrementAndGet(), String.format(Log.ChessGame.gameStarted, chessGame.uid));
+        SetChessResponse();
+        chessGameResponse.content= String.format(Log.ChessGame.gameStarted, chessGame.uid);
+        return chessGameResponse;
     }
 
     @GetMapping("/endGame")
-    public MessageResponseRequest endGame() {
+    public ChessGameResponse endGame() {
+        SetChessResponse();
+
         if (chessGame == null) {
-            return new MessageResponseRequest(counter.incrementAndGet(), Log.ChessGame.endIsOver);
+            chessGameResponse.content = Log.ChessGame.endIsOver;
+        }else{
+            chessGameResponse.content = Log.ChessGame.endGame;
         }
-        chessGame = null;
-        return new MessageResponseRequest(counter.incrementAndGet(), Log.ChessGame.endGame);
+        return chessGameResponse;
+    }
+
+    @GetMapping("/chessGame")
+    public ChessGameResponse gameStarted() {
+        SetChessResponse();
+
+        if(chessGame != null){
+            chessGameResponse.content = String.format(Log.ChessGame.gameAlreadyStarted, chessGame.uid);
+        }else {
+            chessGameResponse.content = String.format(Log.ChessGame.endGame, "None");
+        }
+
+        return chessGameResponse;
     }
 
     @GetMapping("/move")
-    public MoveResponseRequest moveChessNotation(@RequestParam(value = "position", defaultValue = "") String position) {
+    public MoveResponse moveChessNotation(@RequestParam(value = "position", defaultValue = "") String position) {
         if (chessGame == null || position.isEmpty()) {
-            return new MoveResponseRequest(new ChessPiece(ChessPieceType.Invalid, Color.None), Log.ChessGame.endIsOver);
+            return new MoveResponse(new ChessPiece(ChessPieceType.Invalid, Color.None), Log.ChessGame.endIsOver);
         }
         ChessPiece result = chessGame.Move(position);
-        return new MoveResponseRequest(result, Log.ChessGame.pieceMoved);
-    }
-
-    @GetMapping("/getBoard")
-    public ChessboardResponseRequest getBoard() {
-        if (chessGame == null) {
-            return null;
-        }
-        return new ChessboardResponseRequest(chessGame.getChessboard());
-    }
-
-    @GetMapping("/getTurn")
-    public TurnResponseRequest getTurn() {
-        if (chessGame == null) {
-            return null;
-        }
-        return new TurnResponseRequest(chessGame.getTurn());
-    }
-
-    @GetMapping("/getCaptured")
-    public CapturedResponseRequest getCaptured(@RequestParam(value = "color", defaultValue = "") String color) {
-        if (chessGame == null || color.isEmpty()) {
-            return new CapturedResponseRequest(new HashSet<>());
-        }
-
-        return new CapturedResponseRequest(chessGame.getCaptured(color));
+        return new MoveResponse(result, Log.ChessGame.pieceMoved);
     }
 
     @GetMapping("/*")
-    public MessageResponseRequest defaultAll() {
-        return new MessageResponseRequest(counter.incrementAndGet(), Log.empty);
+    public MessageResponse defaultAll() {
+        return new MessageResponse(requestCount.incrementAndGet(), Log.empty);
+    }
+
+    private void SetChessResponse(){
+        chessGameResponse.content = "";
+
+        if(chessGame == null){
+            chessGameResponse.gameStarted = false;
+            chessGameResponse.turn = Color.White;
+            return;
+        }
+        chessGameResponse.id = requestCount.incrementAndGet();
+        chessGameResponse.turn = chessGame.getTurn();
+        chessGameResponse.chessboard = chessGame.getChessboard();
+        chessGameResponse.capturedBlack = chessGame.getCaptured(Color.Black);
+        chessGameResponse.capturedWhite = chessGame.getCaptured(Color.White);
+        chessGameResponse.gameStarted = true;
     }
 }

@@ -72,15 +72,7 @@ public class ChessGame {
         return turn;
     }
 
-    public Set<ChessPiece> getCaptured(String color){
-        if(color.equals("White")){
-            return getCaptured(Color.White);
-        }else{
-            return getCaptured(Color.Black);
-        }
-    }
-
-    private Set<ChessPiece> getCaptured(Color color){
+    public Set<ChessPiece> getCaptured(Color color){
         if(color == Color.White){
             return takenWhite;
         }else{
