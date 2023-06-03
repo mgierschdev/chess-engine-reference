@@ -1,7 +1,7 @@
-package backend;
+package com.backend;
 
-import backend.domain.ChessGame;
-import backend.models.GameState;
+import com.backend.domain.ChessGame;
+import com.backend.models.GameState;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,11 +16,12 @@ import java.util.Scanner;
 @ComponentScan
 public class ApplicationStart {
 	public static void main(String[] args) {
-		//SpringApplication.run(ApplicationStart.class, args);
+		SpringApplication.run(ApplicationStart.class, args);
+	}
+
+	public static void startConsoleGame(){
 		ChessGame chessGame = new ChessGame();
-
 		while(chessGame.gameState != GameState.Checkmate){
-
 			Scanner in = new Scanner(System.in);
 			System.out.println("Move... turn: " + chessGame.getTurn());
 			chessGame.printBoard();

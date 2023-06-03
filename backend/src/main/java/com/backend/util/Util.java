@@ -1,4 +1,4 @@
-package backend.util;
+package com.backend.util;
 
 public class Util {
 

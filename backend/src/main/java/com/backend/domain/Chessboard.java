@@ -1,15 +1,14 @@
-package backend.domain;
+package com.backend.domain;
 
-import backend.models.ChessPiece;
-import backend.models.ChessPieceType;
-import backend.models.Color;
-import backend.models.Position;
-import backend.util.Util;
+import com.backend.models.ChessPiece;
+import com.backend.models.ChessPieceType;
+import com.backend.models.Color;
+import com.backend.models.Position;
+import com.backend.util.Util;
 
 import java.util.Arrays;
 
 // Basic chessboard
-
 //8- rock, horse, bishop, king, horse, bishop, horse, rock
 //7-  pawn, pawn,   pawn,  pawn,  pawn,  pawn,  pawn,  pawn
 //6-  Black side
@@ -63,8 +62,6 @@ public class Chessboard {
             return invalid;
         }
 
-        System.out.println("moving");
-
         ChessPiece sourcePosition = board[source.row][source.col];
         ChessPiece targetPosition = board[target.row][target.col];
 
@@ -92,6 +89,10 @@ public class Chessboard {
                 sourcePosition.type() != ChessPieceType.Empty && // moving empty space
                 sourcePosition.color() != Color.None && // moving empty space
                 targetPosition.color() != player;
+    }
+
+    public ChessPiece GetBoardPosition(Position position){
+        return board[position.row][position.col];
     }
 
     public void printBoard() {

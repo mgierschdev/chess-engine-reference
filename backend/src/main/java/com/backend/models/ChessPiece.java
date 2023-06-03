@@ -1,4 +1,4 @@
-package backend.models;
+package com.backend.models;
 
 public record ChessPiece(ChessPieceType type, Color color) {
 

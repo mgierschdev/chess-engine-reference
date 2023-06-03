@@ -1,6 +1,7 @@
-package backend.domain;
+package com.backend.domain;
 import backend.models.*;
-import backend.util.Util;
+import com.backend.models.*;
+import com.backend.util.Util;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package backend.models;
+package com.backend.models;
 
 public class Position {
     public int row;
