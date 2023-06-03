@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableAutoConfiguration
 @ComponentScan
 public class ApplicationStart {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ApplicationStart.class, args);
 	}
