@@ -105,4 +105,9 @@ public class ChessBoardTest {
         Assert.assertEquals(resultB.type(), ChessPieceType.Empty);
         Assert.assertEquals(result.type(), ChessPieceType.Empty);
     }
+
+    // TODO: check other methods, set white/black pieces
+    // add pieces movement rules
+    // display board on the ui
+
 }
