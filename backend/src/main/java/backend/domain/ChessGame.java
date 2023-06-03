@@ -1,7 +1,6 @@
 package backend.domain;
-
-import backend.domain.Chessboard;
 import backend.models.*;
+import backend.util.Util;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +10,8 @@ public class ChessGame {
 
     public final UUID uid = UUID.randomUUID();
 
+    public final GameState gameState;
+
     private final Chessboard chessboard;
 
     private final Set<ChessPiece> takenWhite;
@@ -18,8 +19,6 @@ public class ChessGame {
     private final Set<ChessPiece> takenBlack;
 
     private Color turn;
-
-    private final GameState gameState;
 
     public ChessGame() {
         chessboard = new Chessboard();
@@ -29,12 +28,20 @@ public class ChessGame {
         turn = Color.White;
     }
 
-    public void StartGame() {
-        chessboard.printBoard();
-    }
-
     public boolean isMove(Position a, Position b) {
         return chessboard.isMove(a, b, turn);
+    }
+
+    public void Move(String chessNotation){
+        if(chessNotation.length() < 5){
+            return;
+        }
+        String[] movement = chessNotation.split("-");
+
+        int[] sourceMatrix = Util.GetMatrixNotation(movement[0]);
+        int[] targetMatrix = Util.GetMatrixNotation(movement[1]);
+
+        Move(new Position(sourceMatrix[0], sourceMatrix[1]), new Position(targetMatrix[0], targetMatrix[1]));
     }
 
     public ChessPiece Move(Position a, Position b) {
@@ -59,6 +66,10 @@ public class ChessGame {
         }
 
         return chessPiece;
+    }
+
+    public void printBoard(){
+        chessboard.printBoard();
     }
 
     public Color getTurn() {

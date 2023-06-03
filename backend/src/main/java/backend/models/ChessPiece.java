@@ -1,11 +1,11 @@
 package backend.models;
 
-import backend.models.ChessPieceType;
-import backend.models.Color;
-
 public record ChessPiece(ChessPieceType type, Color color) {
 
-    public String ToString() {
-        return type + "_" + color;
+    public String toString() {
+        if (type == ChessPieceType.Empty) {
+            return "";
+        }
+        return color.toString().charAt(0) +"." + type.toString().substring(0, 1);
     }
 }

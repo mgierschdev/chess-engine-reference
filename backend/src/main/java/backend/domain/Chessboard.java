@@ -4,6 +4,7 @@ import backend.models.ChessPiece;
 import backend.models.ChessPieceType;
 import backend.models.Color;
 import backend.models.Position;
+import backend.util.Util;
 
 import java.util.Arrays;
 
@@ -17,10 +18,10 @@ import java.util.Arrays;
 //3- White side
 //2-  pawn, pawn,   pawn,  pawn,  pawn,  pawn,  pawn,  pawn
 //1-  rock, horse, bishop, queen, king, bishop, horse, rock
-//    a ,  b ,    c,      , d ,   e    , f    , g    , h
+//      a ,  b ,    c,      , d ,   e    , f    , g    , h
 
 public class Chessboard {
-    private final ChessPiece[][] board;
+    private ChessPiece[][] board;
 
     private final ChessPiece invalid;
 
@@ -28,7 +29,7 @@ public class Chessboard {
 
     public Chessboard() {
         board = new ChessPiece[8][8];
-        invalid =  new ChessPiece(ChessPieceType.Empty, Color.None);
+        invalid = new ChessPiece(ChessPieceType.Empty, Color.None);
         emptySpace = new ChessPiece(ChessPieceType.Empty, Color.None);
 
         for (int row = 2; row <= 6; row++) {
@@ -36,7 +37,7 @@ public class Chessboard {
         }
 
         Arrays.fill(board[1], new ChessPiece(ChessPieceType.Pawn, Color.White));
-        Arrays.fill(board[7], new ChessPiece(ChessPieceType.Pawn, Color.Black));
+        Arrays.fill(board[6], new ChessPiece(ChessPieceType.Pawn, Color.Black));
 
         board[7][0] = new ChessPiece(ChessPieceType.Rock, Color.Black);
         board[7][1] = new ChessPiece(ChessPieceType.Horse, Color.Black);
@@ -62,21 +63,24 @@ public class Chessboard {
             return invalid;
         }
 
+        System.out.println("moving");
+
         ChessPiece sourcePosition = board[source.row][source.col];
         ChessPiece targetPosition = board[target.row][target.col];
 
-        board[source.row][source.col] = sourcePosition;
+        board[source.row][source.col] = new ChessPiece(ChessPieceType.Empty, Color.None);
+        board[target.row][target.col] = sourcePosition;
 
-        if(targetPosition.color() != player){
+        if (targetPosition.color() != player) {
             return targetPosition;
         }
 
         return emptySpace;
     }
 
-    public boolean isMove(Position source, Position target, Color player){
+    public boolean isMove(Position source, Position target, Color player) {
         // moving outside board
-        if(target.col < 0 || target.col >= board[0].length || source.row < 0 || source.row >= board.length){
+        if (target.col < 0 || target.col >= board[0].length || source.row < 0 || source.row >= board.length) {
             return false;
         }
 
@@ -91,10 +95,14 @@ public class Chessboard {
     }
 
     public void printBoard() {
-        for (ChessPiece[] chessPieces : board) {
-            for (int j = board[0].length - 1; j >= 0 ; j--) {
-                System.out.print(" " + chessPieces[j].toString());
+
+        for (int row = board.length - 1; row >= 0; row--) {
+            for (int col = 0; col < board[0].length; col++) {
+
+                System.out.print(" " + board[row][col].toString() + "(" + Util.GetChessNotation(row, col) + ")");
+
             }
+
             System.out.println(" ");
         }
     }
