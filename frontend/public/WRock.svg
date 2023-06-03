@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 440 486" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;">
+    <g transform="matrix(1,0,0,1,-6191,-6442)">
+        <g transform="matrix(1,0,0,1,411.613,9.09495e-13)">
+            <g id="WRock">
+                <g transform="matrix(15.6861,0,0,15.6861,5646.59,6308.38)">
+                    <rect x="9" y="36" width="27" height="3" style="fill:white;stroke:black;stroke-width:0.95px;"/>
+                </g>
+                <g transform="matrix(15.6861,0,0,15.6861,5646.59,6308.38)">
+                    <rect x="12" y="32" width="21" height="4" style="fill:white;stroke:black;stroke-width:0.95px;"/>
+                </g>
+                <g transform="matrix(15.6861,0,0,15.6861,5646.59,6308.38)">
+                    <path d="M11,14L11,9L15,9L15,11L20,11L20,9L25,9L25,11L30,11L30,9L34,9L34,14" style="fill:white;stroke:black;stroke-width:0.95px;"/>
+                </g>
+                <g transform="matrix(15.6861,0,0,15.6861,5646.59,6308.38)">
+                    <path d="M34,14L31,17L14,17L11,14" style="fill:white;stroke:black;stroke-width:0.95px;stroke-linecap:round;"/>
+                </g>
+                <g transform="matrix(15.6861,0,0,15.6861,5646.59,6308.38)">
+                    <path d="M31,17L31,29.5L14,29.5L14,17" style="fill:white;stroke:black;stroke-width:0.95px;stroke-linejoin:miter;"/>
+                </g>
+                <g transform="matrix(15.6861,0,0,15.6861,5646.59,6308.38)">
+                    <path d="M31,29.5L32.5,32L12.5,32L14,29.5" style="fill:white;stroke:black;stroke-width:0.95px;stroke-linecap:round;"/>
+                </g>
+                <g transform="matrix(15.6861,0,0,15.6861,5646.59,6308.38)">
+                    <path d="M11,14L34,14" style="fill:none;stroke:black;stroke-width:0.95px;stroke-linecap:round;stroke-linejoin:miter;"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

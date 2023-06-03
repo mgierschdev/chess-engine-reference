@@ -1,27 +1,47 @@
+/*Applied to every route*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+
+.button {
+    @apply rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.top-panel {
+    @apply flex justify-center space-x-4 bg-white rounded-xl shadow-sm p-8
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.left-side-panel {
+    @apply grid justify-center;
+}
+
+.right-side-panel {
+    @apply grid justify-center bg-white rounded-md drop-shadow-md  justify-items-center p-10
+}
+
+.right-side-panel-item {
+    @apply bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-inset ring-gray-300
+}
+
+.chess-piece-container {
+    @apply col-span-1 row-span-1
+}
+
+.chess-pawn {
+    background-image: url('../../public/WPawn.svg');
+    background-repeat: no-repeat;
+    width: 80px;
+    height: 80px;
+}
+
+.box-container {
+    @apply bg-white rounded-md drop-shadow-sm
+}
+
+.chess-board-background {
+    background-image: url('../../public/board.svg');
+    background-repeat: no-repeat;
+    width: 850px;
+    height: 850px;
 }
