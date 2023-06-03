@@ -1,7 +1,6 @@
 package com.backend.util;
 
 public class Util {
-
     public static String GetChessNotation(int row, int col){
         // a - h cols
         // 1 - 9 rows

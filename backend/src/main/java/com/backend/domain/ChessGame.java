@@ -28,20 +28,16 @@ public class ChessGame {
         turn = Color.White;
     }
 
-    public boolean isMove(Position a, Position b) {
-        return chessboard.isMove(a, b, turn);
-    }
-
-    public void Move(String chessNotation){
+    public ChessPiece Move(String chessNotation){
         if(chessNotation.length() < 5){
-            return;
+            return new ChessPiece(ChessPieceType.Invalid, Color.None);
         }
-        String[] movement = chessNotation.split("-");
 
+        String[] movement = chessNotation.split("-");
         int[] sourceMatrix = Util.GetMatrixNotation(movement[0]);
         int[] targetMatrix = Util.GetMatrixNotation(movement[1]);
 
-        Move(new Position(sourceMatrix[0], sourceMatrix[1]), new Position(targetMatrix[0], targetMatrix[1]));
+        return Move(new Position(sourceMatrix[0], sourceMatrix[1]), new Position(targetMatrix[0], targetMatrix[1]));
     }
 
     public ChessPiece Move(Position a, Position b) {
@@ -74,5 +70,25 @@ public class ChessGame {
 
     public Color getTurn() {
         return turn;
+    }
+
+    public Set<ChessPiece> getCaptured(String color){
+        if(color.equals("White")){
+            return getCaptured(Color.White);
+        }else{
+            return getCaptured(Color.Black);
+        }
+    }
+
+    private Set<ChessPiece> getCaptured(Color color){
+        if(color == Color.White){
+            return takenWhite;
+        }else{
+            return takenBlack;
+        }
+    }
+
+    public ChessPiece[][] getChessboard() {
+        return chessboard.getBoard();
     }
 }

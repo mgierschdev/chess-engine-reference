@@ -27,7 +27,6 @@ public class ApplicationStart {
 			chessGame.printBoard();
 			String input = in.next();
 			chessGame.Move(input);
-
 			System.out.println("entered "+input);
 		}
 	}

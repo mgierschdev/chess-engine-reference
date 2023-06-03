@@ -20,7 +20,7 @@ import java.util.Arrays;
 //      a ,  b ,    c,      , d ,   e    , f    , g    , h
 
 public class Chessboard {
-    private ChessPiece[][] board;
+    private final ChessPiece[][] board;
 
     private final ChessPiece invalid;
 
@@ -92,8 +92,12 @@ public class Chessboard {
                 targetPosition.color() != player;
     }
 
-    public ChessPiece getBoardPosition(int row, int col){
+    public ChessPiece getBoardPosition(int row, int col) {
         return board[row][col];
+    }
+
+    public ChessPiece[][] getBoard(){
+        return board;
     }
 
     public void printBoard() {
