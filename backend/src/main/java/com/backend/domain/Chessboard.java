@@ -57,6 +57,7 @@ public class Chessboard {
         board[0][7] = new ChessPiece(ChessPieceType.Rock, Color.White);
     }
 
+    // This method returns the captured piece if any otherwhise an empty space
     public ChessPiece movePiece(Position source, Position target, Color player) {
         if (!isMove(source, target, player)) {
             return invalid;
@@ -91,8 +92,8 @@ public class Chessboard {
                 targetPosition.color() != player;
     }
 
-    public ChessPiece GetBoardPosition(Position position){
-        return board[position.row][position.col];
+    public ChessPiece getBoardPosition(int row, int col){
+        return board[row][col];
     }
 
     public void printBoard() {
@@ -106,5 +107,6 @@ public class Chessboard {
 
             System.out.println(" ");
         }
+        System.out.println(" ");
     }
 }

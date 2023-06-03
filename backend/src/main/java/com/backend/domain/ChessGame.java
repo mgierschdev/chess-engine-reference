@@ -1,5 +1,4 @@
 package com.backend.domain;
-import backend.models.*;
 import com.backend.models.*;
 import com.backend.util.Util;
 
