@@ -1,5 +1,5 @@
-import {ChessGame} from "@/app/_private/model/ChessGame";
-import {ChessMove} from "@/app/_private/model/ChessMove";
+import {ChessGame} from "@/app/_services/model/ChessGame";
+import {ChessMove} from "@/app/_services/model/ChessMove";
 
 export class ChessService {
 
@@ -10,6 +10,8 @@ export class ChessService {
     }
 
     public async endGame(): Promise<ChessGame>{
+        let response = await this.request('endGame');
+        console.log(response);
         return this.request('endGame');
     }
 
@@ -21,8 +23,8 @@ export class ChessService {
         return this.request('chessGame');
     }
 
-    private async request(enpoint: any) {
-        const res = await fetch(this.Api.concat(enpoint), { cache: 'no-store' });
+    private async request(endpoint: any) {
+        const res = await fetch(this.Api.concat(endpoint), { cache: 'no-store' });
         if (!res.ok) {
             throw new Error('Failed to fetch data');
         }

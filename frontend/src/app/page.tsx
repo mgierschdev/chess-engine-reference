@@ -1,23 +1,18 @@
 import React from 'react';
-
-
-// function StartGameButton(started: any){
-//     if(started){
-//         return <button type="button" className="button">End Game</button>;
-//     }else{
-//         return <button type="button" className="button">Start Game</button>;
-//     }
-// }
+import StartGameButton from "@/app/_client_components/StartGameButton";
+import {ChessService} from "@/app/_services/ChessService";
+import {ChessGame} from "@/app/_services/model/ChessGame";
 
 export default async function Home() {
 
-    // /startGame , /endGame , /move, /getBoard, /getTurn, /getCaptured
-    //gameStarted
-    //const gameStarted = await startGame("gameStarted");
+    let gameService: ChessService = new ChessService();
+    let gameInfo: ChessGame = await gameService.getChessGame();
+
+    let test = "test";
 
     return (
         <main>
-         {/*//   {gameStarted.content}*/}
+            {gameInfo.gameStarted}
             <div className="grid grid-rows-3 grid-flow-col">
 
                 <div className="grid row-span-3 justify-end p-2">
@@ -29,6 +24,10 @@ export default async function Home() {
 
                 <div className="grid row-span-2 box-container p-5">
                     <div className="left-side-panel grid-cols-1">
+
+                        <StartGameButton
+                            gameStarted={test}
+                        />
 
                         {/*<button type="button" className="button">End Game</button>*/}
                         {/*<StartGameButton started={gameStarted.response}/>*/}
@@ -47,16 +46,6 @@ export default async function Home() {
                             className="right-side-panel-item">
                             White Pieces:
                         </div>
-                        {/*<div*/}
-                        {/*    className="right-side-panel-item">*/}
-                        {/*    Movement list*/}
-                        {/*    <ul className="grid justify-center">*/}
-                        {/*        <li>d13-d41</li>*/}
-                        {/*        <li>d13-d41</li>*/}
-                        {/*        <li>d13-d41</li>*/}
-                        {/*        <li>d13-d41</li>*/}
-                        {/*    </ul>*/}
-                        {/*</div>*/}
                     </div>
                 </div>
             </div>

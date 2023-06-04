@@ -38,13 +38,14 @@ public class ChessController {
 
     @GetMapping("/endGame")
     public ChessGameResponse endGame() {
-        SetChessResponse();
 
         if (chessGame == null) {
             chessGameResponse.content = Log.ChessGame.endIsOver;
         }else{
+            chessGame = null;
             chessGameResponse.content = Log.ChessGame.endGame;
         }
+        SetChessResponse();
         return chessGameResponse;
     }
 
@@ -79,6 +80,7 @@ public class ChessController {
         chessGameResponse.content = "";
 
         if(chessGame == null){
+            chessGameResponse = new ChessGameResponse();
             chessGameResponse.gameStarted = false;
             chessGameResponse.turn = Color.White;
             return;
