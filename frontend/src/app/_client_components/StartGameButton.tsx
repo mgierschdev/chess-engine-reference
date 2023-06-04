@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, {useState} from 'react';
 import {ChessService} from "@/app/_services/ChessService";
 import {ChessGame} from "@/app/_services/model/ChessGame";
 
@@ -9,19 +9,18 @@ let gameService: ChessService = new ChessService();
 
 export default function StartGameButton({gameStarted}: any) {
 
-    let started = gameStarted;
+    const [started, setStarted] = useState(gameStarted);
+
 
     async function startGame(): Promise<void> {
         let response: ChessGame;
-        console.log("game started");
-        console.log(started);
 
         if (started) {
             response = await gameService.endGame();
         }else{
             response = await gameService.startGame();
         }
-        started = response.gameStarted;
+        setStarted(response.gameStarted);
     }
 
     return (
