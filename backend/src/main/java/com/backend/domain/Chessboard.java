@@ -27,12 +27,16 @@ public class Chessboard {
     private final ChessPiece emptySpace;
 
     public Chessboard() {
-        board = new ChessPiece[8][8];
+        board = GetInitBoard();
         invalid = new ChessPiece(ChessPieceType.Empty, Color.None);
         emptySpace = new ChessPiece(ChessPieceType.Empty, Color.None);
+    }
+
+    public static ChessPiece[][] GetInitBoard(){
+        ChessPiece[][] board = new ChessPiece[8][8];
 
         for (int row = 2; row <= 6; row++) {
-            Arrays.fill(board[row], emptySpace);
+            Arrays.fill(board[row], new ChessPiece(ChessPieceType.Empty, Color.None));
         }
 
         Arrays.fill(board[1], new ChessPiece(ChessPieceType.Pawn, Color.White));
@@ -55,6 +59,8 @@ public class Chessboard {
         board[0][5] = new ChessPiece(ChessPieceType.Bishop, Color.White);
         board[0][6] = new ChessPiece(ChessPieceType.Horse, Color.White);
         board[0][7] = new ChessPiece(ChessPieceType.Rock, Color.White);
+
+        return board;
     }
 
     // This method returns the captured piece if any otherwhise an empty space

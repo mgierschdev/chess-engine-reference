@@ -1,6 +1,7 @@
 package com.backend.controllers;
 
 import com.backend.domain.ChessGame;
+import com.backend.domain.Chessboard;
 import com.backend.models.ChessPiece;
 import com.backend.models.ChessPieceType;
 import com.backend.models.Color;
@@ -85,6 +86,7 @@ public class ChessController {
             chessGameResponse = new ChessGameResponse();
             chessGameResponse.gameStarted = false;
             chessGameResponse.turn = Color.None;
+            chessGameResponse.chessboard = Chessboard.GetInitBoard();
             return;
         }
         chessGameResponse.id = requestCount.incrementAndGet();
