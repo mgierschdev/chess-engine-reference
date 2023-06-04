@@ -7,14 +7,15 @@ import {ChessGame} from "@/app/_services/model/ChessGame";
 // Game Service
 let gameService: ChessService = new ChessService();
 
-
-
 export default function StartGameButton({gameStarted}: any) {
 
     let started = gameStarted;
 
     async function startGame(): Promise<void> {
         let response: ChessGame;
+        console.log("game started");
+        console.log(started);
+
         if (started) {
             response = await gameService.endGame();
         }else{

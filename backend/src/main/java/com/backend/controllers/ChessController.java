@@ -29,12 +29,12 @@ public class ChessController {
     public ChessGameResponse startGame() {
         if(chessGame != null){
            SetChessResponse();
-           chessGameResponse.content= String.format(Log.ChessGame.gameAlreadyStarted, chessGame.uid);
+           chessGameResponse.content= Log.ChessGame.gameAlreadyStarted;
            return chessGameResponse;
         }
         chessGame = new ChessGame();
         SetChessResponse();
-        chessGameResponse.content= String.format(Log.ChessGame.gameStarted, chessGame.uid);
+        chessGameResponse.content= Log.ChessGame.gameStarted;
         return chessGameResponse;
     }
 
@@ -56,9 +56,9 @@ public class ChessController {
         SetChessResponse();
 
         if(chessGame != null){
-            chessGameResponse.content = String.format(Log.ChessGame.gameAlreadyStarted, chessGame.uid);
+            chessGameResponse.content = Log.ChessGame.gameAlreadyStarted;
         }else {
-            chessGameResponse.content = String.format(Log.ChessGame.endGame, "None");
+            chessGameResponse.content = Log.ChessGame.endGame;
         }
 
         return chessGameResponse;
