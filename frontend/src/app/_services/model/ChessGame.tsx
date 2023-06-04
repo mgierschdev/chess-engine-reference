@@ -15,15 +15,15 @@ export interface ChessPiece {
 }
 
 export enum Piece {
-    Pawn = "Pawn",
-    Horse = "Horse",
-    Rock = "Rock",
-    Bishop = "Bishop",
-    Queen = "Queen",
-    King = "King"
+    Pawn,
+    Horse,
+    Rock,
+    Bishop,
+    Queen,
+    King
 }
 
 export enum Color {
-    Black = "Black",
-    White = "White"
+    Black,
+    White
 }

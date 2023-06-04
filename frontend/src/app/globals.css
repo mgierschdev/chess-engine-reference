@@ -45,3 +45,11 @@
     width: 850px;
     height: 850px;
 }
+
+.chessboard {
+    display: grid;
+}
+
+.chessboard-cell {
+    display: grid;
+}

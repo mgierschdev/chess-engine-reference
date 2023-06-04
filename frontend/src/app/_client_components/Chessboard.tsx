@@ -14,15 +14,11 @@ export default function Chessboard({gameInfoProp}: any) {
         let board = gameInfo.chessboard;
         let output = [];
 
-        console.log("board");
-        console.log(board);
-
         for (let row = 0; row < board.length; row++) {
             for (let col = 0; col < board[0].length; col++) {
                 let current = board[row][col];
-                console.log(current.Type);
                 output.push(
-                    <div key={col + "-" + row}>{board[row][col].Type +" "} - {board[row][col].Color}</div>
+                    <div className="chessboard-cell" key={col + "-" + row}>{board[row][col].type} - {board[row][col].color}</div>
                 );
             }
         }
@@ -31,7 +27,7 @@ export default function Chessboard({gameInfoProp}: any) {
     }
 
     return (
-        <div>
+        <div className="chessBoard">
             {/*// className="chess-board-background">*/}
             {chessPieces}
         </div>
