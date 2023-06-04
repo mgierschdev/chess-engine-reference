@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import React from 'react';
 import RightSidePanel from "@/app/_client_components/RightSidePanel";
 import {ChessService} from "@/app/_services/ChessService";

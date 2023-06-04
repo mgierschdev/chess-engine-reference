@@ -9,24 +9,38 @@ let gameService: ChessService = new ChessService();
 
 export default function RightSidePanel({gameStarted}: any) {
 
-    const [started, setStarted] = useState(gameStarted);
+    const [gameInfo, setGameInfo] = useState(gameStarted);
 
     async function startGame(): Promise<void> {
         let response: ChessGame;
 
-        if (started) {
+        if (gameInfo.gameStarted) {
             response = await gameService.endGame();
-        }else{
+        } else {
             response = await gameService.startGame();
         }
-        setStarted(response.gameStarted);
+        setGameInfo(response);
     }
 
     return (
         <div>
-            {!started ?
+            {!gameInfo.gameStarted ?
                 <button onClick={() => startGame()}>Start Game</button> :
                 <button onClick={() => startGame()}>End Game</button>}
+            <div
+                className="right-side-panel-item">
+                Turn: {gameInfo.turn}
+            </div>
+
+            <div
+                className="right-side-panel-item">
+                Black Pieces:
+            </div>
+
+            <div
+                className="right-side-panel-item">
+                White Pieces:
+            </div>
         </div>
     );
 }
