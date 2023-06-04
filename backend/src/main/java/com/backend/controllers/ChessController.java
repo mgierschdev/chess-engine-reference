@@ -84,7 +84,7 @@ public class ChessController {
         if(chessGame == null){
             chessGameResponse = new ChessGameResponse();
             chessGameResponse.gameStarted = false;
-            chessGameResponse.turn = Color.White;
+            chessGameResponse.turn = Color.None;
             return;
         }
         chessGameResponse.id = requestCount.incrementAndGet();

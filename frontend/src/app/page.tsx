@@ -21,10 +21,7 @@ export default async function Home() {
 
                 <div className="grid row-span-2 box-container p-5">
                     <div className="left-side-panel grid-cols-1">
-
-                        <RightSidePanel
-                            gameStarted={gameInfo.gameStarted}
-                        />
+                        <RightSidePanel gameStarted={gameInfo} />
                     </div>
                 </div>
             </div>
