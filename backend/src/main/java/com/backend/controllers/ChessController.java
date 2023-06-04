@@ -6,12 +6,14 @@ import com.backend.models.ChessPieceType;
 import com.backend.models.Color;
 import com.backend.models.requests.*;
 import com.backend.util.Log;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class ChessController {
     private final AtomicLong requestCount = new AtomicLong();
