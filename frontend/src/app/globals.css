@@ -1,31 +1,5 @@
-/*Applied to every route*/
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.main {
 
-
-.button {
-    @apply rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50
-}
-
-.top-panel {
-    @apply flex justify-center space-x-4 bg-white rounded-xl shadow-sm p-8
-}
-
-.left-side-panel {
-    @apply grid justify-center;
-}
-
-.right-side-panel {
-    @apply grid justify-center bg-white rounded-md drop-shadow-md  justify-items-center p-10
-}
-
-.right-side-panel-item {
-    @apply bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-inset ring-gray-300
-}
-
-.chess-piece-container {
-    @apply col-span-1 row-span-1
 }
 
 .chess-pawn {
@@ -33,10 +7,6 @@
     background-repeat: no-repeat;
     width: 80px;
     height: 80px;
-}
-
-.box-container {
-    @apply bg-white rounded-md drop-shadow-sm
 }
 
 .chess-board-background {
@@ -48,8 +18,15 @@
 
 .chessboard {
     display: grid;
+    grid-template-columns: auto auto auto;
+    background-color: #2196F3;
+    padding: 10px;
 }
 
 .chessboard-cell {
-    display: grid;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
 }

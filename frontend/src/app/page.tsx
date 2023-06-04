@@ -10,20 +10,23 @@ export default async function Home() {
 
     let gameService: ChessService = new ChessService();
     let gameInfo: ChessGame = await gameService.getChessGame();
+    let currentDate = new Date();
+
 
     return (
         <main>
-            <div className="grid grid-rows-3 grid-flow-col">
+            <div className="main">
+                <div className="header">Header</div>
 
-                <div className="grid row-span-3 justify-end p-2">
+                <div className="left-panel">
                     <Chessboard gameInfoProp={gameInfo}/>
                 </div>
 
-                <div className="grid row-span-2 box-container p-5">
-                    <div className="left-side-panel grid-cols-1">
+                <div className="right-panel">
                         <RightSidePanel gameInfoProp={gameInfo} />
-                    </div>
                 </div>
+
+                <div className="footer">{currentDate.getUTCDate()}</div>
             </div>
 
         </main>
