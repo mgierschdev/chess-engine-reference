@@ -13,6 +13,11 @@ export default function Chessboard({gameInfoProp}: any) {
     const [gameInfo, setGameInfo] = useState(gameInfoProp);
     const [chessPieces, setChessPieces] = useState(printChessBoard);
 
+    function changePiece(row: number, col: number){
+        console.log(gameInfo);
+        gameInfo.chessboard[row][col].isSelected = true;
+    }
+
     function printChessBoard() {
         let board = gameInfo.chessboard;
         let output = [];
@@ -22,17 +27,15 @@ export default function Chessboard({gameInfoProp}: any) {
                 let current: ChessPiece = board[row][col];
                 current.row = row;
                 current.col = col;
-
-                if (current.type != ChessPieceType.Empty) {
-                    current.isDraggable = true;
-                } else {
-                    current.isDraggable = false;
-                }
-
+                current.isDraggable = current.type != ChessPieceType.Empty;
+                current.isSelected = false;
                 output.push(<ChessPieceCell key={row + "-" + col} chessPiece={current}/>);
             }
         }
 
+        // changePiece(0,0);
+        // changePiece(0,1);
+        // changePiece(1,1);
         return output;
     }
 

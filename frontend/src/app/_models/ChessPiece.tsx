@@ -5,6 +5,7 @@ export interface ChessPiece {
     type: ChessPieceType,
     color: Color,
     isDraggable: boolean,
+    isSelected: boolean,
     row: number,
     col: number
 }
