@@ -1,5 +1,5 @@
-import {ChessGame} from "@/app/_services/model/ChessGame";
-import {ChessMove} from "@/app/_services/model/ChessMove";
+import {ChessGame} from "@/app/_models/ChessGame";
+import {ChessMove} from "@/app/_models/ChessMove";
 
 export class ChessService {
 
@@ -11,7 +11,6 @@ export class ChessService {
 
     public async endGame(): Promise<ChessGame>{
         let response = await this.request('endGame');
-        console.log(response);
         return this.request('endGame');
     }
 

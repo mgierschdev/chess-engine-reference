@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react';
 import {ChessService} from "@/app/_services/ChessService";
-import {ChessGame} from "@/app/_services/model/ChessGame";
+import {ChessGame} from "@/app/_models/ChessGame";
 
 // Game Service
 let gameService: ChessService = new ChessService();

@@ -1,4 +1,4 @@
-import {ChessPiece} from "@/app/_services/model/ChessGame";
+import {ChessPieceRequest} from "@/app/_models/ChessGame";
 
 export interface ChessMove {
     chessPiece: ChessPiece;

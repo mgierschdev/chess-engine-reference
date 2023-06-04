@@ -43,21 +43,21 @@ public class Chessboard {
         Arrays.fill(board[6], new ChessPiece(ChessPieceType.Pawn, Color.Black));
 
         board[7][0] = new ChessPiece(ChessPieceType.Rock, Color.Black);
-        board[7][1] = new ChessPiece(ChessPieceType.Horse, Color.Black);
+        board[7][1] = new ChessPiece(ChessPieceType.Knight, Color.Black);
         board[7][2] = new ChessPiece(ChessPieceType.Bishop, Color.Black);
         board[7][3] = new ChessPiece(ChessPieceType.King, Color.Black);
         board[7][4] = new ChessPiece(ChessPieceType.Queen, Color.Black);
         board[7][5] = new ChessPiece(ChessPieceType.Bishop, Color.Black);
-        board[7][6] = new ChessPiece(ChessPieceType.Horse, Color.Black);
+        board[7][6] = new ChessPiece(ChessPieceType.Knight, Color.Black);
         board[7][7] = new ChessPiece(ChessPieceType.Rock, Color.Black);
 
         board[0][0] = new ChessPiece(ChessPieceType.Rock, Color.White);
-        board[0][1] = new ChessPiece(ChessPieceType.Horse, Color.White);
+        board[0][1] = new ChessPiece(ChessPieceType.Knight, Color.White);
         board[0][2] = new ChessPiece(ChessPieceType.Bishop, Color.White);
         board[0][3] = new ChessPiece(ChessPieceType.King, Color.White);
         board[0][4] = new ChessPiece(ChessPieceType.Queen, Color.White);
         board[0][5] = new ChessPiece(ChessPieceType.Bishop, Color.White);
-        board[0][6] = new ChessPiece(ChessPieceType.Horse, Color.White);
+        board[0][6] = new ChessPiece(ChessPieceType.Knight, Color.White);
         board[0][7] = new ChessPiece(ChessPieceType.Rock, Color.White);
 
         return board;

@@ -5,7 +5,7 @@ public enum ChessPieceType {
     Empty,
     Pawn,
     Bishop,
-    Horse,
+    Knight,
     Rock,
     King,
     Queen
