@@ -7,9 +7,9 @@ import {ChessGame} from "@/app/_services/model/ChessGame";
 // Game Service
 let gameService: ChessService = new ChessService();
 
-export default function RightSidePanel({gameStarted}: any) {
+export default function RightSidePanel({gameInfoProp}: any) {
 
-    const [gameInfo, setGameInfo] = useState(gameStarted);
+    const [gameInfo, setGameInfo] = useState(gameInfoProp);
 
     async function startGame(): Promise<void> {
         let response: ChessGame;

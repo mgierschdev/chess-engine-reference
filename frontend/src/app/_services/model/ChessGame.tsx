@@ -9,20 +9,21 @@ export interface ChessGame {
 }
 
 export interface ChessPiece {
-    Type: Piece,
-    Color: Color,
+    type: Piece,
+    color: Color,
+
 }
 
 export enum Piece {
-    Pawn,
-    Horse,
-    Rock,
-    Bishop,
-    Queen,
-    King
+    Pawn = "Pawn",
+    Horse = "Horse",
+    Rock = "Rock",
+    Bishop = "Bishop",
+    Queen = "Queen",
+    King = "King"
 }
 
 export enum Color {
-    Black,
-    White
+    Black = "Black",
+    White = "White"
 }
