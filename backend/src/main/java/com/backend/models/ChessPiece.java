@@ -6,6 +6,6 @@ public record ChessPiece(ChessPieceType type, Color color) {
         if (type == ChessPieceType.Empty) {
             return "";
         }
-        return color.toString().charAt(0) +"." + type.toString().substring(0, 1);
+        return color.toString().charAt(0) +"." + type.toString().charAt(0);
     }
 }
