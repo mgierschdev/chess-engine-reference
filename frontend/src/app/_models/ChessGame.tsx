@@ -1,4 +1,3 @@
-
 import {Property} from "csstype";
 import Color = Property.Color;
 import {ChessPiece} from "@/app/_models/ChessPiece";
@@ -9,6 +8,6 @@ export interface ChessGame {
     gameStarted : boolean;
     capturedWhite: any;
     capturedBlack: any;
-    chessboard: ChessPiece[][];
+    chessboard: ChessPiece[];
     turn : Color;
 }

@@ -11,6 +11,6 @@ public class ChessGameResponse {
     public boolean gameStarted;
     public Set<ChessPiece> capturedWhite;
     public Set<ChessPiece> capturedBlack;
-    public ChessPiece[][] chessboard;
+    public ChessPieceResponse[] chessboard;
     public Color turn;
 }

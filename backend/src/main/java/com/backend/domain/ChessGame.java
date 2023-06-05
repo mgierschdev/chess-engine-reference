@@ -1,5 +1,6 @@
 package com.backend.domain;
 import com.backend.models.*;
+import com.backend.models.requests.ChessPieceResponse;
 import com.backend.util.Util;
 
 import java.util.HashSet;
@@ -80,7 +81,7 @@ public class ChessGame {
         }
     }
 
-    public ChessPiece[][] getChessboard() {
-        return chessboard.getBoard();
+    public ChessPieceResponse[] getChessboard() {
+        return Chessboard.GetArrayBoard(chessboard.getBoard());
     }
 }

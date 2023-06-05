@@ -86,7 +86,7 @@ public class ChessController {
             chessGameResponse = new ChessGameResponse();
             chessGameResponse.gameStarted = false;
             chessGameResponse.turn = Color.None;
-            chessGameResponse.chessboard = Chessboard.GetInitBoard();
+            chessGameResponse.chessboard = Chessboard.GetArrayBoard(Chessboard.GetInitMatrixBoard());
             return;
         }
         chessGameResponse.id = requestCount.incrementAndGet();

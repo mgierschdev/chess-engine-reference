@@ -3,39 +3,46 @@
 import {ChessService} from "@/app/_services/ChessService";
 import React, {useState} from "react";
 import ChessPieceCell from "@/app/_client_components/ChessPieceCell";
+import {ChessPieceType, Color} from "@/app/_models/enums";
 import {ChessPiece} from "@/app/_models/ChessPiece";
-import {ChessPieceType} from "@/app/_models/enums";
+import {getCords} from "./ChessUtil";
 
-let gameService: ChessService = new ChessService();
+// let gameService: ChessService = new ChessService();
 
 export default function Chessboard({gameInfoProp}: any) {
+    let [chessboard, setChessboard] = useState(gameInfoProp.chessboard);
+    let chessPieces = printChessBoard();
 
-    const [gameInfo, setGameInfo] = useState(gameInfoProp);
-    const [chessPieces, setChessPieces] = useState(printChessBoard);
+    function onCellClick(position: number) {
 
-    function changePiece(row: number, col: number){
-        console.log(gameInfo);
-        gameInfo.chessboard[row][col].isSelected = true;
+        console.log(getCords(position));
+
+        setChessboard(chessboard.map(
+            (chessPiece: ChessPiece) => {
+                if (chessPiece.position == position) {
+                    return {
+                        ...chessPiece,
+                        isSelected: true,
+                        type: ChessPieceType.Queen,
+                        color: Color.White
+                    }
+                } else {
+                    return chessPiece;
+                }
+            }
+        ));
     }
 
+    //1 2 3 4 5 6 7 8 9 10 .... 64  % 8 = col
+
     function printChessBoard() {
-        let board = gameInfo.chessboard;
         let output = [];
 
-        for (let row = board.length - 1; row >= 0; row--) {
-            for (let col = 0; col < board[0].length; col++) {
-                let current: ChessPiece = board[row][col];
-                current.row = row;
-                current.col = col;
-                current.isDraggable = current.type != ChessPieceType.Empty;
-                current.isSelected = false;
-                output.push(<ChessPieceCell key={row + "-" + col} chessPiece={current}/>);
-            }
+        for (let position = chessboard.length - 1; position >= 0; position--) {
+            output.push(<ChessPieceCell key={position}
+                                        chessPiece={chessboard[position]}
+                                        onCellClick={onCellClick}/>);
         }
-
-        // changePiece(0,0);
-        // changePiece(0,1);
-        // changePiece(1,1);
         return output;
     }
 
