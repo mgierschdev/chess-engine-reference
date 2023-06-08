@@ -74,8 +74,24 @@ public class Chessboard {
         return board[row][col];
     }
 
-    public ChessPiece[][] getBoard(){
+    public ChessPiece[][] getBoard() {
         return board;
+    }
+
+    public Position[] validMoves(Position from, Position to) {
+        if (isFalse(from) || isFalse(to)){
+            return new Position[0];
+        }
+
+//        ChessPiece chessPiece =
+        return  new Position[0];
+    }
+
+    public boolean isFalse(Position position) {
+        return position.col < 0 ||
+                position.row < 0 ||
+                position.row >= board.length ||
+                position.col >= board[0].length;
     }
 
     public void printBoard() {
@@ -91,12 +107,12 @@ public class Chessboard {
         System.out.println(" ");
     }
 
-    public static ChessPieceResponse[] GetArrayBoard(ChessPiece[][] board){
+    public static ChessPieceResponse[] GetArrayBoard(ChessPiece[][] board) {
         List<ChessPieceResponse> chessboard = new ArrayList<>();
         int position = 1;
 
-        for (ChessPiece[] row: board) {
-            for(ChessPiece piece : row){
+        for (ChessPiece[] row : board) {
+            for (ChessPiece piece : row) {
                 chessboard.add(new ChessPieceResponse(
                         piece.type(),
                         piece.color(),
@@ -109,7 +125,7 @@ public class Chessboard {
         return chessboard.toArray(ChessPieceResponse[]::new);
     }
 
-    public static ChessPiece[][] GetInitMatrixBoard(){
+    public static ChessPiece[][] GetInitMatrixBoard() {
         ChessPiece[][] board = new ChessPiece[8][8];
 
         for (int row = 2; row <= 6; row++) {

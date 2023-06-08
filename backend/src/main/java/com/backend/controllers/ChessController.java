@@ -5,6 +5,7 @@ import com.backend.domain.Chessboard;
 import com.backend.models.ChessPiece;
 import com.backend.models.ChessPieceType;
 import com.backend.models.Color;
+import com.backend.models.Position;
 import com.backend.models.requests.*;
 import com.backend.util.Log;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -72,6 +73,15 @@ public class ChessController {
         }
         ChessPiece result = chessGame.Move(position);
         return new MoveResponse(result, Log.ChessGame.pieceMoved);
+    }
+
+    @GetMapping("/getValidMove")
+    public Position[] getValidMove(@RequestParam(value = "chessPiece", defaultValue = "") MoveRequest moveRequest) {
+        if (chessGame == null || moveRequest.from == null || moveRequest.to == null) {
+            return new Position[0];
+        }
+
+        return chessGame.getValidMoves(moveRequest);
     }
 
     @GetMapping("/*")

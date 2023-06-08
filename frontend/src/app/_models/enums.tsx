@@ -1,6 +1,6 @@
 export enum ChessPieceType {
     Pawn = "Pawn",
-    Horse = "Horse",
+    Knight = "Knight",
     Rock = "Rock",
     Bishop = "Bishop",
     Queen = "Queen",

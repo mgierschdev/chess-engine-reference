@@ -1,6 +1,8 @@
 package com.backend.domain;
+
 import com.backend.models.*;
 import com.backend.models.requests.ChessPieceResponse;
+import com.backend.models.requests.MoveRequest;
 import com.backend.util.Util;
 
 import java.util.HashSet;
@@ -29,8 +31,8 @@ public class ChessGame {
         turn = Color.White;
     }
 
-    public ChessPiece Move(String chessNotation){
-        if(chessNotation.length() < 5){
+    public ChessPiece Move(String chessNotation) {
+        if (chessNotation.length() < 5) {
             return new ChessPiece(ChessPieceType.Invalid, Color.None);
         }
 
@@ -65,7 +67,11 @@ public class ChessGame {
         return chessPiece;
     }
 
-    public void printBoard(){
+    public Position[] getValidMoves(MoveRequest moveRequest) {
+        return chessboard.validMoves(moveRequest.from, moveRequest.to);
+    }
+
+    public void printBoard() {
         chessboard.printBoard();
     }
 
@@ -73,10 +79,10 @@ public class ChessGame {
         return turn;
     }
 
-    public Set<ChessPiece> getCaptured(Color color){
-        if(color == Color.White){
+    public Set<ChessPiece> getCaptured(Color color) {
+        if (color == Color.White) {
             return takenWhite;
-        }else{
+        } else {
             return takenBlack;
         }
     }

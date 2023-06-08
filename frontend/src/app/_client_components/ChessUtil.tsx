@@ -1,5 +1,6 @@
 import {ChessPiece} from "@/app/_models/ChessPiece";
 import {BoardPosition} from "@/app/_models/BoardPosition";
+import {ChessPieceType} from "@/app/_models/enums";
 
 // returns the x,y position given a 64 array position, O(c)
 export function getCords(position: number): number[] {
@@ -25,6 +26,7 @@ export function getCords(position: number): number[] {
 export function getValidMovesChessPiece(chessPiece : ChessPiece): BoardPosition[]{
     let positions : BoardPosition[] = [];
 
+    // Calculate backend
     // Pawns O(c)
     // if a pawn is on the 1 or 7 rank, can move 2 or 1 space forward
     // evaluate on passant
@@ -42,11 +44,11 @@ export function getValidMovesChessPiece(chessPiece : ChessPiece): BoardPosition[
 
     // King O(c) 8 spaces around which are not attacked
 
-    positions.push(
-        {
-            col: 0, row: 0
-        }
-    );
+    // positions.push(
+    //     {
+    //         col: 0, row: 0
+    //     }
+    // );
 
     return positions;
 }
