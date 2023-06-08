@@ -8,10 +8,7 @@ import com.backend.models.Color;
 import com.backend.models.Position;
 import com.backend.models.requests.*;
 import com.backend.util.Log;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -67,7 +64,7 @@ public class ChessController {
     }
 
     @GetMapping("/move")
-    public PositionResponse moveChessNotation(@RequestParam(value = "position", defaultValue = "") String position) {
+    public PositionResponse moveChessNotation(@RequestParam String position) {
         if (chessGame == null || position.isEmpty()) {
             return new PositionResponse(new ChessPiece(ChessPieceType.Invalid, Color.None), Log.ChessGame.endIsOver);
         }
@@ -75,13 +72,13 @@ public class ChessController {
         return new PositionResponse(result, Log.ChessGame.pieceMoved);
     }
 
-    @GetMapping("/getValidMove")
-    public Position[] getValidMove(@RequestParam(value = "chessPiece", defaultValue = "") MoveRequest moveRequest) {
-        if (chessGame == null || moveRequest.from == null) {
+    @GetMapping("/getValidMoves/{row}/{col}")
+    public Position[] getValidMoves(@PathVariable("row") int row, @PathVariable("col") int col) {
+        if (chessGame == null) {
             return new Position[0];
         }
 
-        return chessGame.getValidMoves(moveRequest);
+        return chessGame.getValidMoves(new Position(row, col));
     }
 
     @GetMapping("/*")

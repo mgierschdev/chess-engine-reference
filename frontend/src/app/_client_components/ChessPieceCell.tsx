@@ -6,14 +6,14 @@ export default function ChessPieceCell({chessPiece, onCellClick}: any) {
     function getChessPieceClass(chessPiece: ChessPiece): string {
         let className = 'chessboard-grid-cell';
 
+        if (chessPiece.isSelected) {
+            className += ' chess-cell-selected';
+        }
+
         if (chessPiece.type === ChessPieceType.Empty ||
             chessPiece.type === ChessPieceType.Invalid ||
             chessPiece.color === Color.None) {
             return className;
-        }
-
-        if (chessPiece.isSelected) {
-            className += ' chess-cell-selected';
         }
 
         className += ' chess-cell-piece chess-' + chessPiece.type.toString().toLowerCase() + '-' + chessPiece.color.toString().toLowerCase();

@@ -2,7 +2,6 @@ package com.backend.domain;
 
 import com.backend.models.*;
 import com.backend.models.requests.ChessPieceResponse;
-import com.backend.models.requests.MoveRequest;
 import com.backend.util.Util;
 
 import java.util.HashSet;
@@ -63,8 +62,16 @@ public class ChessGame {
         return chessPiece;
     }
 
-    public Position[] getValidMoves(MoveRequest moveRequest) {
-        return chessboard.getValidMoves(moveRequest.from);
+    public Position[] getValidMoves(Position position) {
+        Position[] validPositions = chessboard.getValidMoves(new Position(position.row - 1, position.col - 1));
+
+        // we add offset
+        for (Position pos: validPositions) {
+            pos.row += 1;
+            pos.col += 1;
+        }
+
+        return validPositions;
     }
 
     public void printBoard() {

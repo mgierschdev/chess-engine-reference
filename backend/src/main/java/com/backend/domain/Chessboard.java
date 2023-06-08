@@ -141,15 +141,10 @@ public class Chessboard {
     }
 
     // Calculate backend
-
     // Bishops O(n + m) where n,m is the size of each diagonal
-
     // Rocks O(n + m) where n,m is the size of each line, straight lines
-
     // Queen (n + m + a + b) each line / diagonal, All spaces
-
     // Knights O(c) 8 positions in an L shape
-
     // King O(c) 8 spaces around which are not attacked
 
     public Position[] getValidMoves(Position position) {
@@ -298,7 +293,7 @@ public class Chessboard {
         }
 
         if (chessPiece.color() == Color.Black) {
-            if (position.row == 7) {
+            if (position.row == 6) {
                 addPawnTour(position, new int[]{-1, 0}, valid, chessPiece.color());
             } else if (isValid(singleBlackNext) && board[singleBlackNext[0]][singleBlackNext[1]].type() == ChessPieceType.Empty) {
                 valid.add(new Position(singleBlackNext[0], singleBlackNext[1]));
@@ -308,15 +303,14 @@ public class Chessboard {
         return valid.toArray(Position[]::new);
     }
 
-    // TODO: add
     private void addPawnTour(Position from, int[] orientation, List<Position> list, Color color) {
 
         // evaluate if it can eat one space diagonally each side
-        if(isValid(from.row + orientation[0], from.col + 1) && board[from.row + orientation[0]][from.col + 1].color() != color){
+        if(isValid(from.row + orientation[0], from.col + 1) && board[from.row + orientation[0]][from.col + 1].color() == getOpposite(color)){
             list.add(new Position(from.row + orientation[0], from.col + 1));
         }
 
-        if(isValid(from.row + orientation[0], from.col - 1) && board[from.row + orientation[0]][from.col - 1].color() != color){
+        if(isValid(from.row + orientation[0], from.col - 1) && board[from.row + orientation[0]][from.col - 1].color() == getOpposite(color)){
             list.add(new Position(from.row + orientation[0], from.col - 1));
         }
 
@@ -334,7 +328,6 @@ public class Chessboard {
 
         // TODO: evaluate on passant | check history of moves
         // Pawns can become a different piece if they reach the end of the board
-        list.add(from);
     }
 
     private void addKingTour(Position from, int[] orientation, List<Position> list, Color move) {
@@ -378,5 +371,12 @@ public class Chessboard {
                 row >= 0 &&
                 row < board.length &&
                col < board[0].length;
+    }
+
+    private Color getOpposite(Color color){
+        if(color == Color.None){
+            return color;
+        }
+        return  color == Color.White ? Color.Black : Color.White;
     }
 }
