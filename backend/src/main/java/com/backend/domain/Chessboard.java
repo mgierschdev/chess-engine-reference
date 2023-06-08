@@ -284,45 +284,63 @@ public class Chessboard {
         }
 
         List<Position> valid = new ArrayList<>();
+        int[] singleWhiteNext = new int[]{position.row + 1, position.col};
+        int[] singleBlackNext = new int[]{position.row - 1, position.col};
 
         // if a pawn is on the 1 or 7 rank, can move 2 or 1 space forward
         if (chessPiece.color() == Color.White) {
             if (position.row == 1) {
-                addPawnTour(position, new int[]{1, 0}, valid);
+                addPawnTour(position, new int[]{1, 0}, valid, chessPiece.color());
+
+            } else if (isValid(singleWhiteNext) && board[singleWhiteNext[0]][singleWhiteNext[1]].type() == ChessPieceType.Empty) {
+                valid.add(new Position(singleWhiteNext[0], singleWhiteNext[1]));
             }
         }
 
         if (chessPiece.color() == Color.Black) {
             if (position.row == 7) {
-                addPawnTour(position, new int[]{-1, 0}, valid);
+                addPawnTour(position, new int[]{-1, 0}, valid, chessPiece.color());
+            } else if (isValid(singleBlackNext) && board[singleBlackNext[0]][singleBlackNext[1]].type() == ChessPieceType.Empty) {
+                valid.add(new Position(singleBlackNext[0], singleBlackNext[1]));
             }
         }
-
-        // evaluate on passant
-        // check history of moves
-        // evaluate if it can eat one space diagonally each side
-        // Pawns can become a different piece if they reach the end of the board
-        // depending on the color and direction
 
         return valid.toArray(Position[]::new);
     }
 
-    private void addPawnTour(Position from, int[] orientation, List<Position> list) {
-        //evaluate tour from --- to
-//        if(isFalse(from) || board[from.row][from.col].color() == pieceMovingColor){
-//            return;
-//        }
+    // TODO: add
+    private void addPawnTour(Position from, int[] orientation, List<Position> list, Color color) {
+
+        // evaluate if it can eat one space diagonally each side
+        if(isValid(from.row + orientation[0], from.col + 1) && board[from.row + orientation[0]][from.col + 1].color() != color){
+            list.add(new Position(from.row + orientation[0], from.col + 1));
+        }
+
+        if(isValid(from.row + orientation[0], from.col - 1) && board[from.row + orientation[0]][from.col - 1].color() != color){
+            list.add(new Position(from.row + orientation[0], from.col - 1));
+        }
+
+        int moves = 2;
+        int[] initPos = new int[]{from.row, from.col};
+        while(moves-- > 0){
+            initPos[0] += orientation[0];
+
+            if(isValid(initPos[0], from.col) && board[initPos[0]][from.col].type() == ChessPieceType.Empty){
+                list.add(new Position(initPos[0], from.col));
+            }else {
+                break;
+            }
+        }
+
+        // TODO: evaluate on passant | check history of moves
+        // Pawns can become a different piece if they reach the end of the board
         list.add(from);
     }
 
     private void addKingTour(Position from, int[] orientation, List<Position> list, Color move) {
         int row = from.row + orientation[0];
         int col = from.col + orientation[1];
-        if (isValid(new int[]{row, col})
-                &&
-                (board[row][col].type() == ChessPieceType.Empty ||
-                        board[row][col].color() != move
-                )) {
+        if (isValid(row, col) && (board[row][col].type() == ChessPieceType.Empty || board[row][col].color() != move)) {
             list.add(new Position(row, col));
         }
     }
@@ -336,7 +354,7 @@ public class Chessboard {
             list.add(new Position(start[0], start[1]));
         }
 
-        if(isValid(start) && board[start[0]][start[1]].color() != move){
+        if (isValid(start) && board[start[0]][start[1]].color() != move) {
             list.add(new Position(start[0], start[1]));
         }
     }
@@ -353,5 +371,12 @@ public class Chessboard {
                 position[0] >= 0 &&
                 position[0] < board.length &&
                 position[1] < board[0].length;
+    }
+
+    private boolean isValid(int row, int col) {
+        return col >= 0 &&
+                row >= 0 &&
+                row < board.length &&
+               col < board[0].length;
     }
 }
