@@ -78,22 +78,6 @@ public class Chessboard {
         return board;
     }
 
-    public Position[] validMoves(Position from, Position to) {
-        if (isFalse(from) || isFalse(to)){
-            return new Position[0];
-        }
-
-//        ChessPiece chessPiece =
-        return  new Position[0];
-    }
-
-    public boolean isFalse(Position position) {
-        return position.col < 0 ||
-                position.row < 0 ||
-                position.row >= board.length ||
-                position.col >= board[0].length;
-    }
-
     public void printBoard() {
 
         for (int row = board.length - 1; row >= 0; row--) {
@@ -154,5 +138,220 @@ public class Chessboard {
         board[0][7] = new ChessPiece(ChessPieceType.Rock, Color.White);
 
         return board;
+    }
+
+    // Calculate backend
+
+    // Bishops O(n + m) where n,m is the size of each diagonal
+
+    // Rocks O(n + m) where n,m is the size of each line, straight lines
+
+    // Queen (n + m + a + b) each line / diagonal, All spaces
+
+    // Knights O(c) 8 positions in an L shape
+
+    // King O(c) 8 spaces around which are not attacked
+
+    public Position[] getValidMoves(Position position) {
+        if (isFalse(position)) {
+            return new Position[0];
+        }
+
+        ChessPiece chessPiece = board[position.row][position.col];
+
+        switch (chessPiece.type()) {
+            case Pawn -> {
+                return getValidMovesPawn(position, chessPiece);
+            }
+            case Knight -> {
+                return getValidMovesKnight(position, chessPiece);
+            }
+            case Queen -> {
+                return getValidMovesQueen(position, chessPiece);
+            }
+            case King -> {
+                return getValidMovesKing(position, chessPiece);
+            }
+            case Rock -> {
+                return getValidMovesRock(position, chessPiece);
+            }
+            case Bishop -> {
+                return getValidMovesBishop(position, chessPiece);
+            }
+        }
+        return new Position[0];
+    }
+
+    private Position[] getValidMovesRock(Position position, ChessPiece chessPiece) {
+        if (chessPiece.type() != ChessPieceType.Rock) {
+            return new Position[0];
+        }
+
+        List<Position> valid = new ArrayList<>();
+
+        evaluateCompleteTour(position, new int[]{0, 1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{1, 0}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{0, -1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{-1, 0}, valid, chessPiece.color());
+
+        return valid.toArray(Position[]::new);
+    }
+
+    private Position[] getValidMovesBishop(Position position, ChessPiece chessPiece) {
+        if (chessPiece.type() != ChessPieceType.Bishop) {
+            return new Position[0];
+        }
+
+        List<Position> valid = new ArrayList<>();
+
+        evaluateCompleteTour(position, new int[]{1, 1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{-1, 1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{1, -1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{-1, -1}, valid, chessPiece.color());
+
+        return valid.toArray(Position[]::new);
+    }
+
+    private Position[] getValidMovesKing(Position position, ChessPiece chessPiece) {
+        if (chessPiece.type() != ChessPieceType.King) {
+            return new Position[0];
+        }
+
+        List<Position> valid = new ArrayList<>();
+
+        addKingTour(position, new int[]{0, -1}, valid, chessPiece.color());
+        addKingTour(position, new int[]{-1, 0}, valid, chessPiece.color());
+        addKingTour(position, new int[]{0, 1}, valid, chessPiece.color());
+        addKingTour(position, new int[]{1, 0}, valid, chessPiece.color());
+        addKingTour(position, new int[]{-1, 1}, valid, chessPiece.color());
+        addKingTour(position, new int[]{1, -1}, valid, chessPiece.color());
+        addKingTour(position, new int[]{-1, -1}, valid, chessPiece.color());
+        addKingTour(position, new int[]{1, 1}, valid, chessPiece.color());
+
+        return valid.toArray(Position[]::new);
+    }
+
+    private Position[] getValidMovesQueen(Position position, ChessPiece chessPiece) {
+        if (chessPiece.type() != ChessPieceType.Queen) {
+            return new Position[0];
+        }
+
+        List<Position> valid = new ArrayList<>();
+
+        evaluateCompleteTour(position, new int[]{1, 1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{-1, 1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{1, -1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{-1, -1}, valid, chessPiece.color());
+
+        evaluateCompleteTour(position, new int[]{0, 1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{1, 0}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{0, -1}, valid, chessPiece.color());
+        evaluateCompleteTour(position, new int[]{-1, 0}, valid, chessPiece.color());
+
+        return valid.toArray(Position[]::new);
+    }
+
+    private Position[] getValidMovesKnight(Position position, ChessPiece chessPiece) {
+        if (chessPiece.type() != ChessPieceType.Knight) {
+            return new Position[0];
+        }
+
+        List<Position> valid = new ArrayList<>();
+
+        Position[] positions = new Position[]{
+                new Position(position.row + 2, position.col - 1),
+                new Position(position.row + 2, position.col + 1),
+                new Position(position.row - 2, position.col - 1),
+                new Position(position.row - 2, position.col + 1),
+                new Position(position.row + 1, position.col + 2),
+                new Position(position.row - 1, position.col + 2),
+                new Position(position.row + 1, position.col - 2),
+                new Position(position.row - 1, position.col - 2)
+        };
+
+        for (Position next : positions) {
+            if (!isFalse(next) && board[next.row][next.col].color() != chessPiece.color()) {
+                valid.add(next);
+            }
+        }
+
+        return valid.toArray(Position[]::new);
+    }
+
+    private Position[] getValidMovesPawn(Position position, ChessPiece chessPiece) {
+        if (chessPiece.type() != ChessPieceType.Pawn) {
+            return new Position[0];
+        }
+
+        List<Position> valid = new ArrayList<>();
+
+        // if a pawn is on the 1 or 7 rank, can move 2 or 1 space forward
+        if (chessPiece.color() == Color.White) {
+            if (position.row == 1) {
+                addPawnTour(position, new int[]{1, 0}, valid);
+            }
+        }
+
+        if (chessPiece.color() == Color.Black) {
+            if (position.row == 7) {
+                addPawnTour(position, new int[]{-1, 0}, valid);
+            }
+        }
+
+        // evaluate on passant
+        // check history of moves
+        // evaluate if it can eat one space diagonally each side
+        // Pawns can become a different piece if they reach the end of the board
+        // depending on the color and direction
+
+        return valid.toArray(Position[]::new);
+    }
+
+    private void addPawnTour(Position from, int[] orientation, List<Position> list) {
+        //evaluate tour from --- to
+//        if(isFalse(from) || board[from.row][from.col].color() == pieceMovingColor){
+//            return;
+//        }
+        list.add(from);
+    }
+
+    private void addKingTour(Position from, int[] orientation, List<Position> list, Color move) {
+        int row = from.row + orientation[0];
+        int col = from.col + orientation[1];
+        if (isValid(new int[]{row, col})
+                &&
+                (board[row][col].type() == ChessPieceType.Empty ||
+                        board[row][col].color() != move
+                )) {
+            list.add(new Position(row, col));
+        }
+    }
+
+    private void evaluateCompleteTour(Position from, int[] orientation, List<Position> list, Color move) {
+        int[] start = new int[]{from.row, from.col};
+
+        while (isValid(start) && board[start[0]][start[1]].type() == ChessPieceType.Empty) {
+            start[0] += orientation[0];
+            start[1] += orientation[1];
+            list.add(new Position(start[0], start[1]));
+        }
+
+        if(isValid(start) && board[start[0]][start[1]].color() != move){
+            list.add(new Position(start[0], start[1]));
+        }
+    }
+
+    private boolean isFalse(Position position) {
+        return position.col < 0 ||
+                position.row < 0 ||
+                position.row >= board.length ||
+                position.col >= board[0].length;
+    }
+
+    private boolean isValid(int[] position) {
+        return position[1] >= 0 &&
+                position[0] >= 0 &&
+                position[0] < board.length &&
+                position[1] < board[0].length;
     }
 }

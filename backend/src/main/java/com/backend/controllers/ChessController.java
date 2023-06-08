@@ -67,17 +67,17 @@ public class ChessController {
     }
 
     @GetMapping("/move")
-    public MoveResponse moveChessNotation(@RequestParam(value = "position", defaultValue = "") String position) {
+    public PositionResponse moveChessNotation(@RequestParam(value = "position", defaultValue = "") String position) {
         if (chessGame == null || position.isEmpty()) {
-            return new MoveResponse(new ChessPiece(ChessPieceType.Invalid, Color.None), Log.ChessGame.endIsOver);
+            return new PositionResponse(new ChessPiece(ChessPieceType.Invalid, Color.None), Log.ChessGame.endIsOver);
         }
         ChessPiece result = chessGame.Move(position);
-        return new MoveResponse(result, Log.ChessGame.pieceMoved);
+        return new PositionResponse(result, Log.ChessGame.pieceMoved);
     }
 
     @GetMapping("/getValidMove")
     public Position[] getValidMove(@RequestParam(value = "chessPiece", defaultValue = "") MoveRequest moveRequest) {
-        if (chessGame == null || moveRequest.from == null || moveRequest.to == null) {
+        if (chessGame == null || moveRequest.from == null) {
             return new Position[0];
         }
 

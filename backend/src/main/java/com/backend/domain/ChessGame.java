@@ -7,12 +7,8 @@ import com.backend.util.Util;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 public class ChessGame {
-
-    public final UUID uid = UUID.randomUUID();
-
     public final GameState gameState;
 
     private final Chessboard chessboard;
@@ -68,7 +64,7 @@ public class ChessGame {
     }
 
     public Position[] getValidMoves(MoveRequest moveRequest) {
-        return chessboard.validMoves(moveRequest.from, moveRequest.to);
+        return chessboard.getValidMoves(moveRequest.from);
     }
 
     public void printBoard() {
