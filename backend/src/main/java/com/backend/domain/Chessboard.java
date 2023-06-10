@@ -56,7 +56,7 @@ public class Chessboard {
 
     public boolean isMove(Position source, Position target, Color player) {
         // moving outside board
-        if (target.col < 0 || target.col >= board[0].length || source.row < 0 || source.row >= board.length) {
+        if (this.isInvalidPosition(source) || this.isInvalidPosition(target)) {
             return false;
         }
 
@@ -148,7 +148,7 @@ public class Chessboard {
     // King O(c) 8 spaces around which are not attacked
 
     public Position[] getValidMoves(Position position) {
-        if (isFalse(position)) {
+        if (isInvalidPosition(position)) {
             return new Position[0];
         }
 
@@ -265,7 +265,7 @@ public class Chessboard {
         };
 
         for (Position next : positions) {
-            if (!isFalse(next) && board[next.row][next.col].color() != chessPiece.color()) {
+            if (!isInvalidPosition(next) && board[next.row][next.col].color() != chessPiece.color()) {
                 valid.add(next);
             }
         }
@@ -287,7 +287,7 @@ public class Chessboard {
             if (position.row == 1) {
                 addPawnTour(position, new int[]{1, 0}, valid, chessPiece.color());
 
-            } else if (isValid(singleWhiteNext) && board[singleWhiteNext[0]][singleWhiteNext[1]].type() == ChessPieceType.Empty) {
+            } else if (isValidPosition(singleWhiteNext) && board[singleWhiteNext[0]][singleWhiteNext[1]].type() == ChessPieceType.Empty) {
                 valid.add(new Position(singleWhiteNext[0], singleWhiteNext[1]));
             }
         }
@@ -295,7 +295,7 @@ public class Chessboard {
         if (chessPiece.color() == Color.Black) {
             if (position.row == 6) {
                 addPawnTour(position, new int[]{-1, 0}, valid, chessPiece.color());
-            } else if (isValid(singleBlackNext) && board[singleBlackNext[0]][singleBlackNext[1]].type() == ChessPieceType.Empty) {
+            } else if (isValidPosition(singleBlackNext) && board[singleBlackNext[0]][singleBlackNext[1]].type() == ChessPieceType.Empty) {
                 valid.add(new Position(singleBlackNext[0], singleBlackNext[1]));
             }
         }
@@ -306,11 +306,11 @@ public class Chessboard {
     private void addPawnTour(Position from, int[] orientation, List<Position> list, Color color) {
 
         // evaluate if it can eat one space diagonally each side
-        if(isValid(from.row + orientation[0], from.col + 1) && board[from.row + orientation[0]][from.col + 1].color() == getOpposite(color)){
+        if(isValidPosition(from.row + orientation[0], from.col + 1) && board[from.row + orientation[0]][from.col + 1].color() == getOpposite(color)){
             list.add(new Position(from.row + orientation[0], from.col + 1));
         }
 
-        if(isValid(from.row + orientation[0], from.col - 1) && board[from.row + orientation[0]][from.col - 1].color() == getOpposite(color)){
+        if(isValidPosition(from.row + orientation[0], from.col - 1) && board[from.row + orientation[0]][from.col - 1].color() == getOpposite(color)){
             list.add(new Position(from.row + orientation[0], from.col - 1));
         }
 
@@ -319,7 +319,7 @@ public class Chessboard {
         while(moves-- > 0){
             initPos[0] += orientation[0];
 
-            if(isValid(initPos[0], from.col) && board[initPos[0]][from.col].type() == ChessPieceType.Empty){
+            if(isValidPosition(initPos[0], from.col) && board[initPos[0]][from.col].type() == ChessPieceType.Empty){
                 list.add(new Position(initPos[0], from.col));
             }else {
                 break;
@@ -333,7 +333,7 @@ public class Chessboard {
     private void addKingTour(Position from, int[] orientation, List<Position> list, Color move) {
         int row = from.row + orientation[0];
         int col = from.col + orientation[1];
-        if (isValid(row, col) && (board[row][col].type() == ChessPieceType.Empty || board[row][col].color() != move)) {
+        if (isValidPosition(row, col) && (board[row][col].type() == ChessPieceType.Empty || board[row][col].color() != move)) {
             list.add(new Position(row, col));
         }
     }
@@ -341,32 +341,32 @@ public class Chessboard {
     private void evaluateCompleteTour(Position from, int[] orientation, List<Position> list, Color move) {
         int[] start = new int[]{from.row, from.col};
 
-        while (isValid(start) && board[start[0]][start[1]].type() == ChessPieceType.Empty) {
+        while (isValidPosition(start) && board[start[0]][start[1]].type() == ChessPieceType.Empty) {
             start[0] += orientation[0];
             start[1] += orientation[1];
             list.add(new Position(start[0], start[1]));
         }
 
-        if (isValid(start) && board[start[0]][start[1]].color() != move) {
+        if (isValidPosition(start) && board[start[0]][start[1]].color() != move) {
             list.add(new Position(start[0], start[1]));
         }
     }
 
-    private boolean isFalse(Position position) {
+    private boolean isInvalidPosition(Position position) {
         return position.col < 0 ||
                 position.row < 0 ||
                 position.row >= board.length ||
                 position.col >= board[0].length;
     }
 
-    private boolean isValid(int[] position) {
+    private boolean isValidPosition(int[] position) {
         return position[1] >= 0 &&
                 position[0] >= 0 &&
                 position[0] < board.length &&
                 position[1] < board[0].length;
     }
 
-    private boolean isValid(int row, int col) {
+    private boolean isValidPosition(int row, int col) {
         return col >= 0 &&
                 row >= 0 &&
                 row < board.length &&

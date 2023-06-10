@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:3000"})
 @RestController
 public class ChessController {
     private final AtomicLong requestCount = new AtomicLong();
@@ -63,22 +63,22 @@ public class ChessController {
         return chessGameResponse;
     }
 
-    @GetMapping("/move")
-    public PositionResponse moveChessNotation(@RequestParam String position) {
-        if (chessGame == null || position.isEmpty()) {
+    @PostMapping(path ="/move")
+    public PositionResponse moveChessNotation(@RequestBody ChessboardMoveRequest request) {
+        if (chessGame == null || request == null || request.source == null || request.target == null) {
             return new PositionResponse(new ChessPiece(ChessPieceType.Invalid, Color.None), Log.ChessGame.endIsOver);
         }
-        ChessPiece result = chessGame.Move(position);
+
+        ChessPiece result = chessGame.Move(request.source, request.target);
         return new PositionResponse(result, Log.ChessGame.pieceMoved);
     }
 
-    @GetMapping("/getValidMoves/{row}/{col}")
-    public Position[] getValidMoves(@PathVariable("row") int row, @PathVariable("col") int col) {
-        if (chessGame == null) {
+    @PostMapping("/getValidMoves")
+    public Position[] getValidMoves(@RequestBody Position position) {
+        if (chessGame == null || position == null) {
             return new Position[0];
         }
-
-        return chessGame.getValidMoves(new Position(row, col));
+        return chessGame.getValidMoves(position);
     }
 
     @GetMapping("/*")

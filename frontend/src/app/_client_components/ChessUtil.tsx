@@ -1,6 +1,7 @@
 // returns the x,y position given a 64 array position, O(c)
 import {Position} from "@/app/_models/Position";
 
+// returns a chessboard number position given a row/col
 export function getArrayCord(position: number[]): number {
     //col , row
     let col = Math.abs(8 - position[1]) + 1;
@@ -8,6 +9,7 @@ export function getArrayCord(position: number[]): number {
     return ((row - 1) * 8 ) + col;
 }
 
+// gets chessboard cords given a number in the array
 export function getCords(position: number): number[] {
     // invalid position
     if (position > 64) {
@@ -28,6 +30,7 @@ export function getCords(position: number): number[] {
     return [row, col];
 }
 
+// gets a chessboard position object given a number in the array chessboard
 export function getPosition(position: number): Position {
     const coords = getCords(position);
     return {row: coords[0], col: coords[1]};
