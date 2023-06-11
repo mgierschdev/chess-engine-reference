@@ -26,7 +26,7 @@ public class ApplicationStart {
 			System.out.println("Move... turn: " + chessGame.getTurn());
 			chessGame.printBoard();
 			String input = in.next();
-			chessGame.Move(input);
+			chessGame.MoveController(input);
 			System.out.println("entered "+input);
 		}
 	}

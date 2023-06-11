@@ -26,7 +26,7 @@ public class ChessGame {
         turn = Color.White;
     }
 
-    public ChessPiece Move(String chessNotation) {
+    public ChessPiece MoveController(String chessNotation) {
         if (chessNotation.length() < 5) {
             return new ChessPiece(ChessPieceType.Invalid, Color.None);
         }
@@ -35,11 +35,18 @@ public class ChessGame {
         int[] sourceMatrix = Util.GetMatrixNotation(movement[0]);
         int[] targetMatrix = Util.GetMatrixNotation(movement[1]);
 
-        return Move(new Position(sourceMatrix[0], sourceMatrix[1]), new Position(targetMatrix[0], targetMatrix[1]));
+        return MoveController(new Position(sourceMatrix[0], sourceMatrix[1]), new Position(targetMatrix[0], targetMatrix[1]), turn);
     }
 
-    public ChessPiece Move(Position a, Position b) {
-        ChessPiece chessPiece = chessboard.movePiece(a, b, turn);
+    public ChessPiece MoveController(Position a, Position b, Color player) {
+        if(player != turn){
+            return new ChessPiece(ChessPieceType.Invalid, Color.None);
+        }
+
+        removeOffsetChessboardPosition(a);
+        removeOffsetChessboardPosition(b);
+
+        ChessPiece chessPiece = chessboard.movePiece(a, b, player);
 
         if (chessPiece.type() == ChessPieceType.Invalid) {
             return chessPiece;
@@ -62,13 +69,13 @@ public class ChessGame {
         return chessPiece;
     }
 
-    public Position[] getValidMoves(Position position) {
-        Position[] validPositions = chessboard.getValidMoves(new Position(position.row - 1, position.col - 1));
+    public Position[] getValidMovesController(Position position) {
+        removeOffsetChessboardPosition(position);
+        Position[] validPositions = chessboard.getValidMoves(new Position(position.row, position.col));
 
         // we add offset
         for (Position pos: validPositions) {
-            pos.row += 1;
-            pos.col += 1;
+            addOffsetChessboardPosition(pos);
         }
 
         return validPositions;
@@ -92,5 +99,16 @@ public class ChessGame {
 
     public ChessPieceResponse[] getChessboard() {
         return Chessboard.GetArrayBoard(chessboard.getBoard());
+    }
+
+    // the UI chessboard is represented starting from the position [1,1], and backend [0,0]
+    public void removeOffsetChessboardPosition(Position a){
+        a.row -= 1;
+        a.col -= 1;
+    }
+
+    public void addOffsetChessboardPosition(Position a){
+        a.row += 1;
+        a.col += 1;
     }
 }

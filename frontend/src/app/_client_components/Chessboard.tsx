@@ -5,7 +5,7 @@ import React, {useState} from "react";
 import ChessPieceCell from "@/app/_client_components/ChessPieceCell";
 import {ChessPieceType, Color} from "@/app/_models/enums";
 import {ChessPiece} from "@/app/_models/ChessPiece";
-import {getArrayCord, getPosition} from "./ChessUtil";
+import {getArrayCord, getPlayerTurn, getPosition} from "./ChessUtil";
 import {Position} from "@/app/_models/Position";
 
 let gameService: ChessService = new ChessService();
@@ -15,6 +15,7 @@ export default function Chessboard({gameInfoProp}: any) {
     let chessPieces = printChessBoard();
     let [allowedPositions, setAllowedPositions ]= useState(new Set());
     let [selectedPiece, setSelectedPiece] = useState(-1);
+    let [playerTurn, setPlayerTurn] = useState(Color.White);
 
     async function onCellClick(position: number) {
         let clickedPosition = getPosition(position);
@@ -24,13 +25,16 @@ export default function Chessboard({gameInfoProp}: any) {
 
         // we are clicking at the same position as the valid
         if(allowedPositions.has(position)){
-            let moved = await gameService.move(source, clickedPosition);
+            let moved = await gameService.move(source, clickedPosition, playerTurn);
 
             if(moved){
-                console.log("piece moved");
+                // we refresh chessboard
+               // setChessboard(await gameService.getChessGame());
+                setPlayerTurn(getPlayerTurn(playerTurn));
                 setSelectedPiece(-1);
+
             }else {
-                console.log("could not move");
+                //console.log("could not move");
             }
 
         }else if(chessboard[position].type != ChessPieceType.Empty){
@@ -69,21 +73,11 @@ export default function Chessboard({gameInfoProp}: any) {
         ));
     }
 
-    function setChessPiece(chessPiece: ChessPiece, position: number) {
-        setChessboard(chessboard.map(
-            (currentChessPiece: ChessPiece) => {
-                if (currentChessPiece.position == position) {
-                    return {
-                        ...currentChessPiece,
-                        isSelected: true,
-                        type: ChessPieceType.Queen,
-                        color: Color.White
-                    }
-                } else {
-                    return currentChessPiece;
-                }
-            }
-        ));
+    async function updateChessBoard(){
+      //  console.log("updating chessboard");
+        let update = await gameService.getChessGame();
+        setChessboard(update);
+       // highlightPosition(new Set());
     }
 
     //1 2 3 4 5 6 7 8 9 10 .... 64  % 8 = col

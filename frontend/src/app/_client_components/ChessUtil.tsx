@@ -1,5 +1,6 @@
 // returns the x,y position given a 64 array position, O(c)
 import {Position} from "@/app/_models/Position";
+import {Color} from "@/app/_models/enums";
 
 // returns a chessboard number position given a row/col
 export function getArrayCord(position: number[]): number {
@@ -34,4 +35,14 @@ export function getCords(position: number): number[] {
 export function getPosition(position: number): Position {
     const coords = getCords(position);
     return {row: coords[0], col: coords[1]};
+}
+
+export function getPlayerTurn(color: Color): Color{
+    if(color == Color.White){
+        return Color.Black;
+    }else if(color == Color.Black){
+        return Color.White;
+    }else{
+        return Color.None;
+    }
 }

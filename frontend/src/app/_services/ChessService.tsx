@@ -1,7 +1,7 @@
 import {ChessGame} from "@/app/_models/ChessGame";
 import {Position} from "@/app/_models/Position";
 import {ChessboardMoveRequest} from "@/app/_models/ChessboardMoveRequest";
-import {ChessPieceType} from "@/app/_models/enums";
+import {ChessPieceType, Color} from "@/app/_models/enums";
 
 export class ChessService {
 
@@ -24,13 +24,14 @@ export class ChessService {
         return await this.post('getValidMoves', position);
     }
 
-    public async move(source: Position, target: Position): Promise<boolean>{
+    public async move(source: Position, target: Position, playerTurn: Color): Promise<boolean>{
         const request: ChessboardMoveRequest = {
             source: source,
-            target: target
+            target: target,
+            player: playerTurn
         };
         const response = await this.post('move', request);
-        return response.type == ChessPieceType.Empty;
+        return response.chessPiece.type == ChessPieceType.Empty;
     }
 
     private async post(endpoint: any, request: any){
