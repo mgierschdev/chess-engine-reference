@@ -23,7 +23,7 @@ export default function ChessPieceCell({chessPiece, onCellClick}: any) {
     return (
         <div
             draggable={chessPiece.isDraggable}
-            onClick={() => { return onCellClick(chessPiece.position);}}
+            onClick={() => { return onCellClick(chessPiece);}}
             className={getChessPieceClass(chessPiece)}>
         </div>
     );

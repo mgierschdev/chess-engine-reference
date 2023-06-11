@@ -3,43 +3,44 @@
 import {ChessService} from "@/app/_services/ChessService";
 import React, {useState} from "react";
 import ChessPieceCell from "@/app/_client_components/ChessPieceCell";
-import {ChessPieceType, Color} from "@/app/_models/enums";
+import {ChessPieceType} from "@/app/_models/enums";
 import {ChessPiece} from "@/app/_models/ChessPiece";
-import {getArrayCord, getPlayerTurn, getPosition} from "./ChessUtil";
+import {getArrayCord, getPosition} from "./ChessUtil";
 import {Position} from "@/app/_models/Position";
 
 let gameService: ChessService = new ChessService();
 
-export default function Chessboard({gameInfoProp}: any) {
-    let [chessboard, setChessboard] = useState(gameInfoProp.chessboard);
+export default function Chessboard({gameInfo}: any) {
+    let [chessboard, setChessboard] = useState(gameInfo.chessboard);
     let chessPieces = printChessBoard();
     let [allowedPositions, setAllowedPositions ]= useState(new Set());
     let [selectedPiece, setSelectedPiece] = useState(-1);
-    let [playerTurn, setPlayerTurn] = useState(Color.White);
+    let [playerTurn, setPlayerTurn] = useState(gameInfo.turn);
 
-    async function onCellClick(position: number) {
-        let clickedPosition = getPosition(position);
+
+    async function onCellClick(chessPiece: ChessPiece) {
+        let clickedPosition = getPosition(chessPiece.position);
         let source = getPosition(selectedPiece);
         let validMoves: Position[] = [];
         let newValidPositions = new Set();
 
+        console.log(chessPiece);
+
         // we are clicking at the same position as the valid
-        if(allowedPositions.has(position)){
-            let moved = await gameService.move(source, clickedPosition, playerTurn);
+        if(allowedPositions.has(chessPiece.position)){
+                let moved = await gameService.move(source, clickedPosition);
 
             if(moved){
-                // we refresh chessboard
-               // setChessboard(await gameService.getChessGame());
-                setPlayerTurn(getPlayerTurn(playerTurn));
-                setSelectedPiece(-1);
-
+                gameInfo = await gameService.getChessGame();
+                await updateChessBoard();
+                return;
             }else {
                 //console.log("could not move");
             }
 
-        }else if(chessboard[position].type != ChessPieceType.Empty){
+        }else if(chessPiece.type != ChessPieceType.Empty){
             validMoves = await gameService.getValidMoves(clickedPosition);
-            setSelectedPiece(position);
+            setSelectedPiece(chessPiece.position);
         }else{
             // clicked an empty not available cell
             setSelectedPiece(-1);
@@ -74,10 +75,18 @@ export default function Chessboard({gameInfoProp}: any) {
     }
 
     async function updateChessBoard(){
-      //  console.log("updating chessboard");
-        let update = await gameService.getChessGame();
-        setChessboard(update);
-       // highlightPosition(new Set());
+        let game = await gameService.getChessGame();
+        setSelectedPiece(-1);
+        setPlayerTurn(game.turn);
+
+        setChessboard(game.chessboard.map(
+            (currentChessPiece: ChessPiece) => {
+                return {
+                    ...currentChessPiece,
+                    isSelected: false
+                }
+            }
+        ));
     }
 
     //1 2 3 4 5 6 7 8 9 10 .... 64  % 8 = col

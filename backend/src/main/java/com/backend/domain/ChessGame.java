@@ -35,18 +35,15 @@ public class ChessGame {
         int[] sourceMatrix = Util.GetMatrixNotation(movement[0]);
         int[] targetMatrix = Util.GetMatrixNotation(movement[1]);
 
-        return MoveController(new Position(sourceMatrix[0], sourceMatrix[1]), new Position(targetMatrix[0], targetMatrix[1]), turn);
+        return MoveController(new Position(sourceMatrix[0], sourceMatrix[1]), new Position(targetMatrix[0], targetMatrix[1]));
     }
 
-    public ChessPiece MoveController(Position a, Position b, Color player) {
-        if(player != turn){
-            return new ChessPiece(ChessPieceType.Invalid, Color.None);
-        }
-
+    // Returns empty if the move was correct, invalid otherwise, the taken piece if there was a taken piece
+    public ChessPiece MoveController(Position a, Position b) {
         removeOffsetChessboardPosition(a);
         removeOffsetChessboardPosition(b);
 
-        ChessPiece chessPiece = chessboard.movePiece(a, b, player);
+        ChessPiece chessPiece = chessboard.movePiece(a, b, turn);
 
         if (chessPiece.type() == ChessPieceType.Invalid) {
             return chessPiece;

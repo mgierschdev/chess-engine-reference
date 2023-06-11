@@ -10,6 +10,14 @@ export function getArrayCord(position: number[]): number {
     return ((row - 1) * 8 ) + col;
 }
 
+// returns a chessboard number position given a row/col
+export function getArrayCordFromPosition(position: Position): number {
+    //col , row
+    let col = Math.abs(8 - position.col) + 1;
+    let row = position.row;
+    return ((row - 1) * 8 ) + col;
+}
+
 // gets chessboard cords given a number in the array
 export function getCords(position: number): number[] {
     // invalid position

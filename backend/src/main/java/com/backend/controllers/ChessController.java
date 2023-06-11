@@ -65,11 +65,11 @@ public class ChessController {
 
     @PostMapping(path ="/move")
     public PositionResponse moveChessNotation(@RequestBody ChessboardMoveRequest request) {
-        if (chessGame == null || request == null || request.source == null || request.target == null || request.player == null) {
+        if (chessGame == null || request == null || request.source == null || request.target == null) {
             return new PositionResponse(new ChessPiece(ChessPieceType.Invalid, Color.None), Log.ChessGame.endIsOver);
         }
 
-        ChessPiece result = chessGame.MoveController(request.source, request.target, request.player);
+        ChessPiece result = chessGame.MoveController(request.source, request.target);
         return new PositionResponse(result, Log.ChessGame.pieceMoved);
     }
 

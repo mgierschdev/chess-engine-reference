@@ -7,8 +7,10 @@ import Chessboard from "@/app/_client_components/Chessboard";
 import RightSidePanel from "@/app/_client_components/RightSidePanel";
 import {metadata} from "@/app/layout";
 
-export default async function Home() {
 
+export default async function Home() {
+    let title: 'Chess';
+    let description: 'Chess Engine';
     let gameService: ChessService = new ChessService();
     let gameInfo: ChessGame = await gameService.getChessGame();
     let currentDate = new Date();
@@ -19,7 +21,7 @@ export default async function Home() {
                 <div className="header">{metadata.title}</div>
 
                 <div className="left-panel">
-                    <Chessboard gameInfoProp={gameInfo}/>
+                    <Chessboard gameInfo={gameInfo}/>
                 </div>
 
                 <div className="right-panel">

@@ -31,7 +31,7 @@ public class Chessboard {
 
     public Chessboard() {
         board = GetInitMatrixBoard();
-        invalid = new ChessPiece(ChessPieceType.Empty, Color.None);
+        invalid = new ChessPiece(ChessPieceType.Invalid, Color.None);
         emptySpace = new ChessPiece(ChessPieceType.Empty, Color.None);
     }
 
@@ -95,17 +95,20 @@ public class Chessboard {
         List<ChessPieceResponse> chessboard = new ArrayList<>();
         int position = 1;
 
-        for (ChessPiece[] row : board) {
-            for (ChessPiece piece : row) {
+        for (ChessPiece[] chessPieces : board) {
+            for (int col = board[0].length - 1; col >= 0; col--) {
+
+                ChessPiece piece = chessPieces[col];
+
                 chessboard.add(new ChessPieceResponse(
                         piece.type(),
                         piece.color(),
                         piece.type() != ChessPieceType.Empty,
                         position++
                 ));
+
             }
         }
-
         return chessboard.toArray(ChessPieceResponse[]::new);
     }
 
@@ -122,8 +125,8 @@ public class Chessboard {
         board[7][0] = new ChessPiece(ChessPieceType.Rock, Color.Black);
         board[7][1] = new ChessPiece(ChessPieceType.Knight, Color.Black);
         board[7][2] = new ChessPiece(ChessPieceType.Bishop, Color.Black);
-        board[7][3] = new ChessPiece(ChessPieceType.King, Color.Black);
-        board[7][4] = new ChessPiece(ChessPieceType.Queen, Color.Black);
+        board[7][3] = new ChessPiece(ChessPieceType.Queen, Color.Black);
+        board[7][4] = new ChessPiece(ChessPieceType.King, Color.Black);
         board[7][5] = new ChessPiece(ChessPieceType.Bishop, Color.Black);
         board[7][6] = new ChessPiece(ChessPieceType.Knight, Color.Black);
         board[7][7] = new ChessPiece(ChessPieceType.Rock, Color.Black);
@@ -131,8 +134,8 @@ public class Chessboard {
         board[0][0] = new ChessPiece(ChessPieceType.Rock, Color.White);
         board[0][1] = new ChessPiece(ChessPieceType.Knight, Color.White);
         board[0][2] = new ChessPiece(ChessPieceType.Bishop, Color.White);
-        board[0][3] = new ChessPiece(ChessPieceType.King, Color.White);
-        board[0][4] = new ChessPiece(ChessPieceType.Queen, Color.White);
+        board[0][3] = new ChessPiece(ChessPieceType.Queen, Color.White);
+        board[0][4] = new ChessPiece(ChessPieceType.King, Color.White);
         board[0][5] = new ChessPiece(ChessPieceType.Bishop, Color.White);
         board[0][6] = new ChessPiece(ChessPieceType.Knight, Color.White);
         board[0][7] = new ChessPiece(ChessPieceType.Rock, Color.White);
