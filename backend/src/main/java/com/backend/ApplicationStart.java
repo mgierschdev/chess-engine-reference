@@ -12,8 +12,6 @@ import java.util.Scanner;
 
 @SpringBootApplication
 @Configuration
-@EnableAutoConfiguration
-@ComponentScan
 public class ApplicationStart {
 	public static void main(String[] args) {
 		SpringApplication.run(ApplicationStart.class, args);
