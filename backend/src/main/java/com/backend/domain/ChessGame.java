@@ -18,12 +18,16 @@ public class ChessGame {
 
     private Color turn;
 
+    // square available for en passant capture from the last double-step move
+    private Position lastDoubleStep;
+
     public ChessGame() {
         chessboard = new Chessboard();
         takenWhite = new HashSet<>();
         takenBlack = new HashSet<>();
         gameState = GameState.Free;
         turn = Color.White;
+        lastDoubleStep = null;
     }
 
     public ChessPiece MoveController(String chessNotation) {
@@ -44,6 +48,9 @@ public class ChessGame {
         removeOffsetChessboardPosition(b);
 
         ChessPiece chessPiece = chessboard.movePiece(a, b, turn);
+
+        // track possible en passant target
+        lastDoubleStep = chessboard.getEnPassantTarget();
 
         if (chessPiece.type() == ChessPieceType.Invalid) {
             return chessPiece;
