@@ -121,6 +121,35 @@ public class ChessBoardTest {
         Assert.assertEquals(moves[1].col, 0);
     }
 
+    @Test
+    public void TestPawnDiagonalCapture() {
+        Chessboard chessboard = new Chessboard();
+
+        // advance white pawn two spaces
+        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White);
+        // advance black pawn to be capturable
+        chessboard.movePiece(new Position(6, 1), new Position(4, 1), Color.Black);
+
+        Position[] moves = chessboard.getValidMoves(new Position(3, 0));
+        Assert.assertEquals(moves.length, 2);
+
+        // capture the black pawn diagonally
+        ChessPiece capture = chessboard.movePiece(new Position(3, 0), new Position(4, 1), Color.White);
+
+        Assert.assertEquals(capture.type(), ChessPieceType.Pawn);
+        Assert.assertEquals(chessboard.getBoardPosition(4, 1).color(), Color.White);
+    }
+
+    @Test
+    public void TestInvalidKnightMove() {
+        Chessboard chessboard = new Chessboard();
+
+        ChessPiece result = chessboard.movePiece(new Position(0, 1), new Position(2, 1), Color.White);
+
+        Assert.assertEquals(result.type(), ChessPieceType.Invalid);
+        Assert.assertEquals(chessboard.getBoardPosition(0, 1).type(), ChessPieceType.Knight);
+    }
+
     // TODO: check other methods, set white/black pieces
     // add pieces movement rules
     // display board on the ui
