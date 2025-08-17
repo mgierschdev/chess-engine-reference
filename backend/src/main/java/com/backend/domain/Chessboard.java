@@ -29,10 +29,14 @@ public class Chessboard {
 
     private final ChessPiece emptySpace;
 
+    // Square that can be targeted by an en passant capture
+    private Position enPassantTarget;
+
     public Chessboard() {
         board = GetInitMatrixBoard();
         invalid = new ChessPiece(ChessPieceType.Invalid, Color.None);
         emptySpace = new ChessPiece(ChessPieceType.Empty, Color.None);
+        enPassantTarget = null;
     }
 
     // This method returns the captured piece if any otherwhise an empty space
@@ -52,8 +56,32 @@ public class Chessboard {
         ChessPiece sourcePosition = board[source.row][source.col];
         ChessPiece targetPosition = board[target.row][target.col];
 
-        board[source.row][source.col] = new ChessPiece(ChessPieceType.Empty, Color.None);
+        // handle en passant capture
+        boolean isEnPassant = sourcePosition.type() == ChessPieceType.Pawn &&
+                targetPosition.type() == ChessPieceType.Empty &&
+                enPassantTarget != null &&
+                target.row == enPassantTarget.row &&
+                target.col == enPassantTarget.col &&
+                Math.abs(source.col - target.col) == 1;
+
+        // reset en passant target; will be set again if this move is a double step
+        enPassantTarget = null;
+
+        if (isEnPassant) {
+            int capturedRow = source.row;
+            ChessPiece captured = board[capturedRow][target.col];
+            board[source.row][source.col] = emptySpace;
+            board[capturedRow][target.col] = emptySpace;
+            board[target.row][target.col] = sourcePosition;
+            return captured;
+        }
+
+        board[source.row][source.col] = emptySpace;
         board[target.row][target.col] = sourcePosition;
+
+        if (sourcePosition.type() == ChessPieceType.Pawn && Math.abs(target.row - source.row) == 2) {
+            enPassantTarget = new Position((source.row + target.row) / 2, source.col);
+        }
 
         if (targetPosition.color() != player) {
             return targetPosition;
@@ -84,6 +112,10 @@ public class Chessboard {
 
     public ChessPiece[][] getBoard() {
         return board;
+    }
+
+    public Position getEnPassantTarget() {
+        return enPassantTarget;
     }
 
     public void printBoard() {
@@ -315,7 +347,17 @@ public class Chessboard {
             }
         }
 
-        // TODO: evaluate on passant | check history of moves
+        // en passant capture
+        if (enPassantTarget != null) {
+            if (position.row + direction == enPassantTarget.row &&
+                    Math.abs(position.col - enPassantTarget.col) == 1) {
+                ChessPiece adjacent = board[position.row][enPassantTarget.col];
+                if (adjacent.type() == ChessPieceType.Pawn && adjacent.color() == getOpposite(chessPiece.color())) {
+                    valid.add(new Position(enPassantTarget.row, enPassantTarget.col));
+                }
+            }
+        }
+
         // Pawns can become a different piece if they reach the end of the board
 
         return valid.toArray(Position[]::new);

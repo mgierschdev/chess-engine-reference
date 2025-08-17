@@ -150,6 +150,37 @@ public class ChessBoardTest {
         Assert.assertEquals(chessboard.getBoardPosition(0, 1).type(), ChessPieceType.Knight);
     }
 
+    @Test
+    public void TestEnPassantCapture() {
+        Chessboard chessboard = new Chessboard();
+
+        // Position a black pawn next to where a white pawn will double step
+        chessboard.movePiece(new Position(6, 1), new Position(4, 1), Color.Black);
+        chessboard.movePiece(new Position(4, 1), new Position(3, 1), Color.Black);
+
+        // White pawn performs double step to enable en passant
+        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White);
+
+        // Black pawn should have en passant move available
+        Position[] moves = chessboard.getValidMoves(new Position(3, 1));
+        boolean hasEnPassant = false;
+        for (Position p : moves) {
+            if (p.row == 2 && p.col == 0) {
+                hasEnPassant = true;
+                break;
+            }
+        }
+        Assert.assertTrue(hasEnPassant);
+
+        // Execute en passant capture
+        ChessPiece captured = chessboard.movePiece(new Position(3, 1), new Position(2, 0), Color.Black);
+
+        Assert.assertEquals(captured.type(), ChessPieceType.Pawn);
+        Assert.assertEquals(captured.color(), Color.White);
+        Assert.assertEquals(chessboard.getBoardPosition(2, 0).color(), Color.Black);
+        Assert.assertEquals(chessboard.getBoardPosition(3, 0).type(), ChessPieceType.Empty);
+    }
+
     // TODO: check other methods, set white/black pieces
     // add pieces movement rules
     // display board on the ui
