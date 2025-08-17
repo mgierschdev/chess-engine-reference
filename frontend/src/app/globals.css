@@ -35,7 +35,8 @@
 }
 
 .chessboard-grid {
-    background-image: url('../../public/board.svg');
+    /* Use a root-relative path so the asset can be resolved during build */
+    background-image: url('/board.svg');
     background-repeat: no-repeat;
     background-size: cover;
     float: right;
