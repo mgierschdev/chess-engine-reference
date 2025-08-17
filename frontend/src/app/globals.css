@@ -115,3 +115,28 @@
 .chess-king-black {
     background-image: url('../../public/BKing.svg');
 }
+
+.promotion-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.promotion-content {
+    background: white;
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.promotion-option {
+    padding: 10px 15px;
+    cursor: pointer;
+}
