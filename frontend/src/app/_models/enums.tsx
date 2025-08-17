@@ -14,3 +14,9 @@ export enum Color {
     White = "White",
     None = "None"
 }
+
+export enum GameState {
+    Check = "Check",
+    Checkmate = "Checkmate",
+    Free = "Free"
+}

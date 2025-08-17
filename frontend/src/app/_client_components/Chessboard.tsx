@@ -3,7 +3,7 @@
 import {ChessService} from "@/app/_services/ChessService";
 import React, {useState} from "react";
 import ChessPieceCell from "@/app/_client_components/ChessPieceCell";
-import {ChessPieceType, Color} from "@/app/_models/enums";
+import {ChessPieceType, Color, GameState} from "@/app/_models/enums";
 import {ChessPiece} from "@/app/_models/ChessPiece";
 import {getArrayCord, getPosition} from "./ChessUtil";
 import {Position} from "@/app/_models/Position";
@@ -17,11 +17,15 @@ export default function Chessboard({gameInfo}: any) {
     let [allowedPositions, setAllowedPositions ]= useState(new Set());
     let [selectedPiece, setSelectedPiece] = useState(-1);
     let [playerTurn, setPlayerTurn] = useState(gameInfo.turn);
+    let [gameState, setGameState] = useState(gameInfo.gameState);
     let [showPromotion, setShowPromotion] = useState(false);
     let [promotionMove, setPromotionMove] = useState<{source: Position, target: Position} | null>(null);
 
 
     async function onCellClick(chessPiece: ChessPiece) {
+        if(gameState === GameState.Checkmate){
+            return;
+        }
         let clickedPosition = getPosition(chessPiece.position);
         let source = getPosition(selectedPiece);
         let validMoves: Position[] = [];
@@ -103,6 +107,7 @@ export default function Chessboard({gameInfo}: any) {
         let game = await gameService.getChessGame();
         setSelectedPiece(-1);
         setPlayerTurn(game.turn);
+        setGameState(game.gameState);
 
         setChessboard(game.chessboard.map(
             (currentChessPiece: ChessPiece) => {

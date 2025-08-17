@@ -2,6 +2,7 @@ package com.backend.models.requests;
 
 import com.backend.models.ChessPiece;
 import com.backend.models.Color;
+import com.backend.models.GameState;
 
 import java.util.Set;
 
@@ -13,4 +14,5 @@ public class ChessGameResponse {
     public Set<ChessPiece> capturedBlack;
     public ChessPieceResponse[] chessboard;
     public Color turn;
+    public GameState gameState;
 }
