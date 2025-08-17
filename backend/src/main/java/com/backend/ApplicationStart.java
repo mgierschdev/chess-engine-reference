@@ -19,7 +19,7 @@ public class ApplicationStart {
 
 	public static void startConsoleGame(){
 		ChessGame chessGame = new ChessGame();
-		while(chessGame.gameState != GameState.Checkmate){
+                while(chessGame.getGameState() != GameState.Checkmate){
 			Scanner in = new Scanner(System.in);
 			System.out.println("Move... turn: " + chessGame.getTurn());
 			chessGame.printBoard();

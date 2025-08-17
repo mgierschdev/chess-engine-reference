@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ChessGame {
-    public final GameState gameState;
+    private GameState gameState;
 
     private final Chessboard chessboard;
 
@@ -68,11 +68,16 @@ public class ChessGame {
             }
         }
 
-        if (turn == Color.White) {
-            turn = Color.Black;
+        Color nextTurn = turn == Color.White ? Color.Black : Color.White;
+        if (chessboard.isCheckmate(nextTurn)) {
+            gameState = GameState.Checkmate;
+        } else if (chessboard.isKingInCheck(nextTurn)) {
+            gameState = GameState.Check;
         } else {
-            turn = Color.White;
+            gameState = GameState.Free;
         }
+
+        turn = nextTurn;
 
         return chessPiece;
     }
@@ -95,6 +100,10 @@ public class ChessGame {
 
     public Color getTurn() {
         return turn;
+    }
+
+    public GameState getGameState(){
+        return gameState;
     }
 
     public Set<ChessPiece> getCaptured(Color color) {

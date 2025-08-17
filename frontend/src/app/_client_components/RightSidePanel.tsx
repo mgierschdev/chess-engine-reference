@@ -3,6 +3,7 @@
 import React, {useState} from 'react';
 import {ChessService} from "@/app/_services/ChessService";
 import {ChessGame} from "@/app/_models/ChessGame";
+import {GameState} from "@/app/_models/enums";
 
 // Game Service
 let gameService: ChessService = new ChessService();
@@ -27,6 +28,10 @@ export default function RightSidePanel({gameInfoProp}: any) {
             {!gameInfo.gameStarted ?
                 <button onClick={() => startGame()}>Start Game</button> :
                 <button onClick={() => startGame()}>End Game</button>}
+            <div
+                className="right-side-panel-item">
+                Game State: {gameInfo.gameState}
+            </div>
             <div
                 className="right-side-panel-item">
                 Turn: {gameInfo.turn}

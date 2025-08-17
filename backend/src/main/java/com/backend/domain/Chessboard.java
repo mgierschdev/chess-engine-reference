@@ -138,6 +138,77 @@ public class Chessboard {
         return enPassantTarget;
     }
 
+    public boolean isKingInCheck(Color color){
+        Position kingPos = findKing(color);
+        if(kingPos == null){
+            return false;
+        }
+        Color opponent = getOpposite(color);
+        for(int r = 0; r < board.length; r++){
+            for(int c = 0; c < board[r].length; c++){
+                ChessPiece piece = board[r][c];
+                if(piece.color() == opponent){
+                    Position[] moves = getValidMoves(new Position(r,c));
+                    for(Position pos : moves){
+                        if(pos.row == kingPos.row && pos.col == kingPos.col){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isCheckmate(Color color){
+        if(!isKingInCheck(color)){
+            return false;
+        }
+        for(int r = 0; r < board.length; r++){
+            for(int c = 0; c < board[r].length; c++){
+                if(board[r][c].color() == color){
+                    Position from = new Position(r,c);
+                    Position[] moves = getValidMoves(from);
+                    for(Position to : moves){
+                        ChessPiece captured = simulateMove(from, to);
+                        boolean stillCheck = isKingInCheck(color);
+                        undoMove(from, to, captured);
+                        if(!stillCheck){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private ChessPiece simulateMove(Position from, Position to){
+        ChessPiece moving = board[from.row][from.col];
+        ChessPiece captured = board[to.row][to.col];
+        board[to.row][to.col] = moving;
+        board[from.row][from.col] = emptySpace;
+        return captured;
+    }
+
+    private void undoMove(Position from, Position to, ChessPiece captured){
+        ChessPiece moving = board[to.row][to.col];
+        board[from.row][from.col] = moving;
+        board[to.row][to.col] = captured;
+    }
+
+    private Position findKing(Color color){
+        for(int r = 0; r < board.length; r++){
+            for(int c = 0; c < board[r].length; c++){
+                ChessPiece piece = board[r][c];
+                if(piece.type() == ChessPieceType.King && piece.color() == color){
+                    return new Position(r,c);
+                }
+            }
+        }
+        return null;
+    }
+
     private boolean isValidPromotionType(ChessPieceType type) {
         return type == ChessPieceType.Queen ||
                 type == ChessPieceType.Rock ||

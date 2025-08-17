@@ -6,6 +6,7 @@ import com.backend.models.ChessPiece;
 import com.backend.models.ChessPieceType;
 import com.backend.models.Color;
 import com.backend.models.Position;
+import com.backend.models.GameState;
 import com.backend.models.requests.*;
 import com.backend.util.Log;
 import org.springframework.web.bind.annotation.*;
@@ -95,10 +96,12 @@ public class ChessController {
             chessGameResponse.gameStarted = false;
             chessGameResponse.turn = Color.None;
             chessGameResponse.chessboard = Chessboard.GetArrayBoard(Chessboard.GetInitMatrixBoard());
+            chessGameResponse.gameState = GameState.Free;
             return;
         }
         chessGameResponse.id = requestCount.incrementAndGet();
         chessGameResponse.turn = chessGame.getTurn();
+        chessGameResponse.gameState = chessGame.getGameState();
         chessGameResponse.chessboard = chessGame.getChessboard();
         chessGameResponse.capturedBlack = chessGame.getCaptured(Color.Black);
         chessGameResponse.capturedWhite = chessGame.getCaptured(Color.White);
