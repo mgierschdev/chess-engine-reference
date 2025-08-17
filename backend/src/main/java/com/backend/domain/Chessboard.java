@@ -39,8 +39,8 @@ public class Chessboard {
         enPassantTarget = null;
     }
 
-    // This method returns the captured piece if any otherwhise an empty space
-    public ChessPiece movePiece(Position source, Position target, Color player) {
+    // This method returns the captured piece if any otherwise an empty space
+    public ChessPiece movePiece(Position source, Position target, Color player, ChessPieceType promotionType) {
         if (!isMove(source, target, player)) {
             return invalid;
         }
@@ -55,6 +55,14 @@ public class Chessboard {
 
         ChessPiece sourcePosition = board[source.row][source.col];
         ChessPiece targetPosition = board[target.row][target.col];
+
+        // validate promotion type if pawn reaches last rank
+        if (sourcePosition.type() == ChessPieceType.Pawn &&
+                ((player == Color.White && target.row == 7) || (player == Color.Black && target.row == 0))) {
+            if (!isValidPromotionType(promotionType)) {
+                return invalid;
+            }
+        }
 
         // handle en passant capture
         boolean isEnPassant = sourcePosition.type() == ChessPieceType.Pawn &&
@@ -73,6 +81,12 @@ public class Chessboard {
             board[source.row][source.col] = emptySpace;
             board[capturedRow][target.col] = emptySpace;
             board[target.row][target.col] = sourcePosition;
+
+            // handle promotion after en passant (though practically unreachable)
+            if (sourcePosition.type() == ChessPieceType.Pawn &&
+                    ((player == Color.White && target.row == 7) || (player == Color.Black && target.row == 0))) {
+                board[target.row][target.col] = new ChessPiece(promotionType, player);
+            }
             return captured;
         }
 
@@ -81,6 +95,12 @@ public class Chessboard {
 
         if (sourcePosition.type() == ChessPieceType.Pawn && Math.abs(target.row - source.row) == 2) {
             enPassantTarget = new Position((source.row + target.row) / 2, source.col);
+        }
+
+        // handle promotion when pawn reaches last rank
+        if (sourcePosition.type() == ChessPieceType.Pawn &&
+                ((player == Color.White && target.row == 7) || (player == Color.Black && target.row == 0))) {
+            board[target.row][target.col] = new ChessPiece(promotionType, player);
         }
 
         if (targetPosition.color() != player) {
@@ -116,6 +136,13 @@ public class Chessboard {
 
     public Position getEnPassantTarget() {
         return enPassantTarget;
+    }
+
+    private boolean isValidPromotionType(ChessPieceType type) {
+        return type == ChessPieceType.Queen ||
+                type == ChessPieceType.Rock ||
+                type == ChessPieceType.Bishop ||
+                type == ChessPieceType.Knight;
     }
 
     public void printBoard() {

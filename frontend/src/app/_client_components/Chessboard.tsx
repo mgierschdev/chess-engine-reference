@@ -28,7 +28,7 @@ export default function Chessboard({gameInfo}: any) {
 
         // we are clicking at the same position as the valid
         if(allowedPositions.has(chessPiece.position)){
-                let moved = await gameService.move(source, clickedPosition);
+                let moved = await gameService.move(source, clickedPosition, ChessPieceType.Queen);
 
             if(moved){
                 gameInfo = await gameService.getChessGame();
