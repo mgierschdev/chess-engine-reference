@@ -3,10 +3,11 @@
 import {ChessService} from "@/app/_services/ChessService";
 import React, {useState} from "react";
 import ChessPieceCell from "@/app/_client_components/ChessPieceCell";
-import {ChessPieceType} from "@/app/_models/enums";
+import {ChessPieceType, Color} from "@/app/_models/enums";
 import {ChessPiece} from "@/app/_models/ChessPiece";
 import {getArrayCord, getPosition} from "./ChessUtil";
 import {Position} from "@/app/_models/Position";
+import PromotionModal from "@/app/_client_components/PromotionModal";
 
 let gameService: ChessService = new ChessService();
 
@@ -16,6 +17,8 @@ export default function Chessboard({gameInfo}: any) {
     let [allowedPositions, setAllowedPositions ]= useState(new Set());
     let [selectedPiece, setSelectedPiece] = useState(-1);
     let [playerTurn, setPlayerTurn] = useState(gameInfo.turn);
+    let [showPromotion, setShowPromotion] = useState(false);
+    let [promotionMove, setPromotionMove] = useState<{source: Position, target: Position} | null>(null);
 
 
     async function onCellClick(chessPiece: ChessPiece) {
@@ -28,7 +31,17 @@ export default function Chessboard({gameInfo}: any) {
 
         // we are clicking at the same position as the valid
         if(allowedPositions.has(chessPiece.position)){
-                let moved = await gameService.move(source, clickedPosition, ChessPieceType.Queen);
+            const movingPiece = chessboard.find((p: ChessPiece) => p.position === selectedPiece);
+            if(movingPiece && movingPiece.type === ChessPieceType.Pawn){
+                const promotionRank = movingPiece.color === Color.White ? 8 : 1;
+                if(clickedPosition.row === promotionRank){
+                    setPromotionMove({source: source, target: clickedPosition});
+                    setShowPromotion(true);
+                    return;
+                }
+            }
+
+            let moved = await gameService.move(source, clickedPosition);
 
             if(moved){
                 gameInfo = await gameService.getChessGame();
@@ -54,6 +67,18 @@ export default function Chessboard({gameInfo}: any) {
 
         highlightPosition(newValidPositions);
         setAllowedPositions(newValidPositions);
+    }
+
+    async function handlePromotion(type: ChessPieceType){
+        if(promotionMove){
+            let moved = await gameService.move(promotionMove.source, promotionMove.target, type);
+            if(moved){
+                gameInfo = await gameService.getChessGame();
+                await updateChessBoard();
+            }
+        }
+        setShowPromotion(false);
+        setPromotionMove(null);
     }
 
     function highlightPosition(positionSet: any) {
@@ -102,8 +127,11 @@ export default function Chessboard({gameInfo}: any) {
     }
 
     return (
-        <div className="chessboard-grid">
-            {chessPieces}
-        </div>
+        <>
+            {showPromotion && <PromotionModal onSelect={handlePromotion}/>}    
+            <div className="chessboard-grid">
+                {chessPieces}
+            </div>
+        </>
     );
 }
