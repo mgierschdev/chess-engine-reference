@@ -342,16 +342,17 @@ public class Chessboard {
     }
 
     private void evaluateCompleteTour(Position from, int[] orientation, List<Position> list, Color move) {
-        int[] start = new int[]{from.row, from.col};
+        int row = from.row + orientation[0];
+        int col = from.col + orientation[1];
 
-        while (isValidPosition(start) && board[start[0]][start[1]].type() == ChessPieceType.Empty) {
-            start[0] += orientation[0];
-            start[1] += orientation[1];
-            list.add(new Position(start[0], start[1]));
+        while (isValidPosition(row, col) && board[row][col].type() == ChessPieceType.Empty) {
+            list.add(new Position(row, col));
+            row += orientation[0];
+            col += orientation[1];
         }
 
-        if (isValidPosition(start) && board[start[0]][start[1]].color() != move) {
-            list.add(new Position(start[0], start[1]));
+        if (isValidPosition(row, col) && board[row][col].color() != move) {
+            list.add(new Position(row, col));
         }
     }
 
