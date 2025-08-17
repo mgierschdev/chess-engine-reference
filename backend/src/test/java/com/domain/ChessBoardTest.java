@@ -61,7 +61,7 @@ public class ChessBoardTest {
 
         Assert.assertEquals(resultA.type(), ChessPieceType.Rock);
         Assert.assertEquals(resultB.type(), ChessPieceType.Pawn);
-        Assert.assertEquals(result.type(), ChessPieceType.Empty);
+        Assert.assertEquals(result.type(), ChessPieceType.Invalid);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ChessBoardTest {
 
         Assert.assertEquals(resultA.type(), ChessPieceType.Empty);
         Assert.assertEquals(resultB.type(), ChessPieceType.Pawn);
-        Assert.assertEquals(result.type(), ChessPieceType.Empty);
+        Assert.assertEquals(result.type(), ChessPieceType.Invalid);
     }
 
     @Test
@@ -103,7 +103,22 @@ public class ChessBoardTest {
 
         Assert.assertEquals(resultA.type(), ChessPieceType.Empty);
         Assert.assertEquals(resultB.type(), ChessPieceType.Empty);
-        Assert.assertEquals(result.type(), ChessPieceType.Empty);
+        Assert.assertEquals(result.type(), ChessPieceType.Invalid);
+    }
+
+    @Test
+    public void TestRookMovesAfterClearingPath() {
+        Chessboard chessboard = new Chessboard();
+
+        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White);
+
+        Position[] moves = chessboard.getValidMoves(new Position(0, 0));
+
+        Assert.assertEquals(moves.length, 2);
+        Assert.assertEquals(moves[0].row, 1);
+        Assert.assertEquals(moves[0].col, 0);
+        Assert.assertEquals(moves[1].row, 2);
+        Assert.assertEquals(moves[1].col, 0);
     }
 
     // TODO: check other methods, set white/black pieces
