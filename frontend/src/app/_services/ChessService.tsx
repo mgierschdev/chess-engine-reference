@@ -24,10 +24,11 @@ export class ChessService {
         return await this.post('getValidMoves', position);
     }
 
-    public async move(source: Position, target: Position): Promise<boolean>{
+    public async move(source: Position, target: Position, promotionType: ChessPieceType = ChessPieceType.Queen): Promise<boolean>{
         const request: ChessboardMoveRequest = {
             source: source,
-            target: target
+            target: target,
+            promotionType: promotionType
         };
         const response = await this.post('move', request);
         return response.chessPiece.type == ChessPieceType.Empty;

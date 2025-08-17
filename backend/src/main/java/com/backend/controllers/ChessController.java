@@ -69,7 +69,8 @@ public class ChessController {
             return new PositionResponse(new ChessPiece(ChessPieceType.Invalid, Color.None), Log.ChessGame.endIsOver);
         }
 
-        ChessPiece result = chessGame.MoveController(request.source, request.target);
+        ChessPieceType promotion = request.promotionType == null ? ChessPieceType.Queen : request.promotionType;
+        ChessPiece result = chessGame.MoveController(request.source, request.target, promotion);
         return new PositionResponse(result, Log.ChessGame.pieceMoved);
     }
 

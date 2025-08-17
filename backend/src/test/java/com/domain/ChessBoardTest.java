@@ -22,7 +22,7 @@ public class ChessBoardTest {
         chessboard.printBoard();
 
         // White
-        ChessPiece result = chessboard.movePiece(source, target, Color.White);
+        ChessPiece result = chessboard.movePiece(source, target, Color.White, ChessPieceType.Queen);
         ChessPiece resultA = chessboard.getBoardPosition(source.row, source.col);
         ChessPiece resultB = chessboard.getBoardPosition(target.row, target.col);
 
@@ -33,7 +33,7 @@ public class ChessBoardTest {
         // Black
         source = new Position(6, 0);
         target = new Position(5, 0);
-        result = chessboard.movePiece(source, target, Color.Black);
+        result = chessboard.movePiece(source, target, Color.Black, ChessPieceType.Queen);
         resultA = chessboard.getBoardPosition(source.row, source.col);
         resultB = chessboard.getBoardPosition(target.row, target.col);
 
@@ -55,7 +55,7 @@ public class ChessBoardTest {
         chessboard.printBoard();
 
         // White
-        ChessPiece result = chessboard.movePiece(source, target, Color.White);
+        ChessPiece result = chessboard.movePiece(source, target, Color.White, ChessPieceType.Queen);
         ChessPiece resultA = chessboard.getBoardPosition(source.row, source.col);
         ChessPiece resultB = chessboard.getBoardPosition(target.row, target.col);
 
@@ -76,7 +76,7 @@ public class ChessBoardTest {
         chessboard.printBoard();
 
         // White
-        ChessPiece result = chessboard.movePiece(source, target, Color.White);
+        ChessPiece result = chessboard.movePiece(source, target, Color.White, ChessPieceType.Queen);
         ChessPiece resultA = chessboard.getBoardPosition(source.row, source.col);
         ChessPiece resultB = chessboard.getBoardPosition(target.row, target.col);
 
@@ -97,7 +97,7 @@ public class ChessBoardTest {
         chessboard.printBoard();
 
         // White
-        ChessPiece result = chessboard.movePiece(source, target, Color.White);
+        ChessPiece result = chessboard.movePiece(source, target, Color.White, ChessPieceType.Queen);
         ChessPiece resultA = chessboard.getBoardPosition(source.row, source.col);
         ChessPiece resultB = chessboard.getBoardPosition(target.row, target.col);
 
@@ -110,7 +110,7 @@ public class ChessBoardTest {
     public void TestRookMovesAfterClearingPath() {
         Chessboard chessboard = new Chessboard();
 
-        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White);
+        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White, ChessPieceType.Queen);
 
         Position[] moves = chessboard.getValidMoves(new Position(0, 0));
 
@@ -126,15 +126,15 @@ public class ChessBoardTest {
         Chessboard chessboard = new Chessboard();
 
         // advance white pawn two spaces
-        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White);
+        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White, ChessPieceType.Queen);
         // advance black pawn to be capturable
-        chessboard.movePiece(new Position(6, 1), new Position(4, 1), Color.Black);
+        chessboard.movePiece(new Position(6, 1), new Position(4, 1), Color.Black, ChessPieceType.Queen);
 
         Position[] moves = chessboard.getValidMoves(new Position(3, 0));
         Assert.assertEquals(moves.length, 2);
 
         // capture the black pawn diagonally
-        ChessPiece capture = chessboard.movePiece(new Position(3, 0), new Position(4, 1), Color.White);
+        ChessPiece capture = chessboard.movePiece(new Position(3, 0), new Position(4, 1), Color.White, ChessPieceType.Queen);
 
         Assert.assertEquals(capture.type(), ChessPieceType.Pawn);
         Assert.assertEquals(chessboard.getBoardPosition(4, 1).color(), Color.White);
@@ -144,7 +144,7 @@ public class ChessBoardTest {
     public void TestInvalidKnightMove() {
         Chessboard chessboard = new Chessboard();
 
-        ChessPiece result = chessboard.movePiece(new Position(0, 1), new Position(2, 1), Color.White);
+        ChessPiece result = chessboard.movePiece(new Position(0, 1), new Position(2, 1), Color.White, ChessPieceType.Queen);
 
         Assert.assertEquals(result.type(), ChessPieceType.Invalid);
         Assert.assertEquals(chessboard.getBoardPosition(0, 1).type(), ChessPieceType.Knight);
@@ -155,11 +155,11 @@ public class ChessBoardTest {
         Chessboard chessboard = new Chessboard();
 
         // Position a black pawn next to where a white pawn will double step
-        chessboard.movePiece(new Position(6, 1), new Position(4, 1), Color.Black);
-        chessboard.movePiece(new Position(4, 1), new Position(3, 1), Color.Black);
+        chessboard.movePiece(new Position(6, 1), new Position(4, 1), Color.Black, ChessPieceType.Queen);
+        chessboard.movePiece(new Position(4, 1), new Position(3, 1), Color.Black, ChessPieceType.Queen);
 
         // White pawn performs double step to enable en passant
-        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White);
+        chessboard.movePiece(new Position(1, 0), new Position(3, 0), Color.White, ChessPieceType.Queen);
 
         // Black pawn should have en passant move available
         Position[] moves = chessboard.getValidMoves(new Position(3, 1));
@@ -173,12 +173,77 @@ public class ChessBoardTest {
         Assert.assertTrue(hasEnPassant);
 
         // Execute en passant capture
-        ChessPiece captured = chessboard.movePiece(new Position(3, 1), new Position(2, 0), Color.Black);
+        ChessPiece captured = chessboard.movePiece(new Position(3, 1), new Position(2, 0), Color.Black, ChessPieceType.Queen);
 
         Assert.assertEquals(captured.type(), ChessPieceType.Pawn);
         Assert.assertEquals(captured.color(), Color.White);
         Assert.assertEquals(chessboard.getBoardPosition(2, 0).color(), Color.Black);
         Assert.assertEquals(chessboard.getBoardPosition(3, 0).type(), ChessPieceType.Empty);
+    }
+
+    @Test
+    public void TestPawnPromotionToQueen() {
+        Chessboard chessboard = new Chessboard();
+        ChessPiece[][] board = chessboard.getBoard();
+        board[6][0] = new ChessPiece(ChessPieceType.Pawn, Color.White);
+        board[7][0] = new ChessPiece(ChessPieceType.Empty, Color.None);
+
+        ChessPiece result = chessboard.movePiece(new Position(6, 0), new Position(7, 0), Color.White, ChessPieceType.Queen);
+
+        Assert.assertEquals(result.type(), ChessPieceType.Empty);
+        Assert.assertEquals(chessboard.getBoardPosition(7, 0).type(), ChessPieceType.Queen);
+    }
+
+    @Test
+    public void TestPawnPromotionToRock() {
+        Chessboard chessboard = new Chessboard();
+        ChessPiece[][] board = chessboard.getBoard();
+        board[6][1] = new ChessPiece(ChessPieceType.Pawn, Color.White);
+        board[7][1] = new ChessPiece(ChessPieceType.Empty, Color.None);
+
+        ChessPiece result = chessboard.movePiece(new Position(6, 1), new Position(7, 1), Color.White, ChessPieceType.Rock);
+
+        Assert.assertEquals(result.type(), ChessPieceType.Empty);
+        Assert.assertEquals(chessboard.getBoardPosition(7, 1).type(), ChessPieceType.Rock);
+    }
+
+    @Test
+    public void TestPawnPromotionToBishop() {
+        Chessboard chessboard = new Chessboard();
+        ChessPiece[][] board = chessboard.getBoard();
+        board[6][2] = new ChessPiece(ChessPieceType.Pawn, Color.White);
+        board[7][2] = new ChessPiece(ChessPieceType.Empty, Color.None);
+
+        ChessPiece result = chessboard.movePiece(new Position(6, 2), new Position(7, 2), Color.White, ChessPieceType.Bishop);
+
+        Assert.assertEquals(result.type(), ChessPieceType.Empty);
+        Assert.assertEquals(chessboard.getBoardPosition(7, 2).type(), ChessPieceType.Bishop);
+    }
+
+    @Test
+    public void TestPawnPromotionToKnight() {
+        Chessboard chessboard = new Chessboard();
+        ChessPiece[][] board = chessboard.getBoard();
+        board[6][3] = new ChessPiece(ChessPieceType.Pawn, Color.White);
+        board[7][3] = new ChessPiece(ChessPieceType.Empty, Color.None);
+
+        ChessPiece result = chessboard.movePiece(new Position(6, 3), new Position(7, 3), Color.White, ChessPieceType.Knight);
+
+        Assert.assertEquals(result.type(), ChessPieceType.Empty);
+        Assert.assertEquals(chessboard.getBoardPosition(7, 3).type(), ChessPieceType.Knight);
+    }
+
+    @Test
+    public void TestInvalidPawnPromotionType() {
+        Chessboard chessboard = new Chessboard();
+        ChessPiece[][] board = chessboard.getBoard();
+        board[6][4] = new ChessPiece(ChessPieceType.Pawn, Color.White);
+        board[7][4] = new ChessPiece(ChessPieceType.Empty, Color.None);
+
+        ChessPiece result = chessboard.movePiece(new Position(6, 4), new Position(7, 4), Color.White, ChessPieceType.King);
+
+        Assert.assertEquals(result.type(), ChessPieceType.Invalid);
+        Assert.assertEquals(chessboard.getBoardPosition(7, 4).type(), ChessPieceType.Empty);
     }
 
     // TODO: check other methods, set white/black pieces
