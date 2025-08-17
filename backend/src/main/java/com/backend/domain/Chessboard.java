@@ -41,6 +41,14 @@ public class Chessboard {
             return invalid;
         }
 
+        // validate target is within the piece valid moves
+        Position[] validMoves = getValidMoves(source);
+        boolean isValid = Arrays.stream(validMoves)
+                .anyMatch(pos -> pos.row == target.row && pos.col == target.col);
+        if (!isValid) {
+            return invalid;
+        }
+
         ChessPiece sourcePosition = board[source.row][source.col];
         ChessPiece targetPosition = board[target.row][target.col];
 
@@ -280,57 +288,37 @@ public class Chessboard {
         if (chessPiece.type() != ChessPieceType.Pawn) {
             return new Position[0];
         }
-
         List<Position> valid = new ArrayList<>();
-        int[] singleWhiteNext = new int[]{position.row + 1, position.col};
-        int[] singleBlackNext = new int[]{position.row - 1, position.col};
+        int direction = chessPiece.color() == Color.White ? 1 : -1;
+        int startRow = chessPiece.color() == Color.White ? 1 : 6;
 
-        // if a pawn is on the 1 or 7 rank, can move 2 or 1 space forward
-        if (chessPiece.color() == Color.White) {
-            if (position.row == 1) {
-                addPawnTour(position, new int[]{1, 0}, valid, chessPiece.color());
+        int forwardRow = position.row + direction;
 
-            } else if (isValidPosition(singleWhiteNext) && board[singleWhiteNext[0]][singleWhiteNext[1]].type() == ChessPieceType.Empty) {
-                valid.add(new Position(singleWhiteNext[0], singleWhiteNext[1]));
+        // forward move
+        if (isValidPosition(forwardRow, position.col) && board[forwardRow][position.col].type() == ChessPieceType.Empty) {
+            valid.add(new Position(forwardRow, position.col));
+
+            // double move from starting position
+            if (position.row == startRow) {
+                int twoForward = forwardRow + direction;
+                if (isValidPosition(twoForward, position.col) && board[twoForward][position.col].type() == ChessPieceType.Empty) {
+                    valid.add(new Position(twoForward, position.col));
+                }
             }
         }
 
-        if (chessPiece.color() == Color.Black) {
-            if (position.row == 6) {
-                addPawnTour(position, new int[]{-1, 0}, valid, chessPiece.color());
-            } else if (isValidPosition(singleBlackNext) && board[singleBlackNext[0]][singleBlackNext[1]].type() == ChessPieceType.Empty) {
-                valid.add(new Position(singleBlackNext[0], singleBlackNext[1]));
-            }
-        }
-
-        return valid.toArray(Position[]::new);
-    }
-
-    private void addPawnTour(Position from, int[] orientation, List<Position> list, Color color) {
-
-        // evaluate if it can eat one space diagonally each side
-        if(isValidPosition(from.row + orientation[0], from.col + 1) && board[from.row + orientation[0]][from.col + 1].color() == getOpposite(color)){
-            list.add(new Position(from.row + orientation[0], from.col + 1));
-        }
-
-        if(isValidPosition(from.row + orientation[0], from.col - 1) && board[from.row + orientation[0]][from.col - 1].color() == getOpposite(color)){
-            list.add(new Position(from.row + orientation[0], from.col - 1));
-        }
-
-        int moves = 2;
-        int[] initPos = new int[]{from.row, from.col};
-        while(moves-- > 0){
-            initPos[0] += orientation[0];
-
-            if(isValidPosition(initPos[0], from.col) && board[initPos[0]][from.col].type() == ChessPieceType.Empty){
-                list.add(new Position(initPos[0], from.col));
-            }else {
-                break;
+        // captures
+        int[] captureCols = new int[]{position.col - 1, position.col + 1};
+        for (int c : captureCols) {
+            if (isValidPosition(forwardRow, c) && board[forwardRow][c].color() == getOpposite(chessPiece.color())) {
+                valid.add(new Position(forwardRow, c));
             }
         }
 
         // TODO: evaluate on passant | check history of moves
         // Pawns can become a different piece if they reach the end of the board
+
+        return valid.toArray(Position[]::new);
     }
 
     private void addKingTour(Position from, int[] orientation, List<Position> list, Color move) {
