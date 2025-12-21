@@ -11,17 +11,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// Basic chessboard
-//8- rock, horse, bishop, king, horse, bishop, horse, rock
-//7-  pawn, pawn,   pawn,  pawn,  pawn,  pawn,  pawn,  pawn
-//6-  Black side
-//5-
-//4-
-//3- White side
-//2-  pawn, pawn,   pawn,  pawn,  pawn,  pawn,  pawn,  pawn
-//1-  rock, horse, bishop, queen, king, bishop, horse, rock
-//      a ,  b ,    c,      , d ,   e    , f    , g    , h
-
+/**
+ * Problem: Need to represent an 8x8 chess board, validate moves according to chess rules,
+ * handle special moves (castling, en passant, pawn promotion), and detect check/checkmate.
+ * 
+ * Goal: Implement all chess piece movement rules, prevent illegal moves (including those
+ * that would leave the king in check), and determine game-ending conditions.
+ * 
+ * Approach: Stores board as 8x8 matrix of ChessPiece objects. For each piece type, defines
+ * valid move patterns. Validates moves by checking piece-specific rules, path obstruction,
+ * and whether the resulting position leaves the player's king in check. Detects checkmate
+ * by verifying no valid moves exist that would remove check condition.
+ * 
+ * Time: O(n) for move validation where n is the number of pieces (worst case: king check detection)
+ * Space: O(64) = O(1) for the 8x8 board
+ * 
+ * Tags: game-logic, chess-rules, state-validation
+ */
 public class Chessboard {
     private final ChessPiece[][] board;
 

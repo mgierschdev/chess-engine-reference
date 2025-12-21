@@ -1,5 +1,22 @@
 'use client';
 
+/**
+ * Problem: Need to render an interactive 8x8 chessboard UI where users can select pieces,
+ * see valid moves, make moves, and handle pawn promotion.
+ * 
+ * Goal: Provide a responsive chess UI that communicates with the backend API for move
+ * validation and game state updates.
+ * 
+ * Approach: React client component using useState hooks to manage board state, selected piece,
+ * valid move highlights, and turn. On cell click, fetches valid moves from backend or executes
+ * move. Shows promotion modal when pawn reaches final rank. Re-fetches game state after each move.
+ * 
+ * Time: O(1) for rendering (64 cells), O(network) for API calls
+ * Space: O(64) for board state array
+ * 
+ * Tags: react, chess-ui, interactive-board
+ */
+
 import {ChessService} from "@/app/_services/ChessService";
 import React, {useState} from "react";
 import ChessPieceCell from "@/app/_client_components/ChessPieceCell";
