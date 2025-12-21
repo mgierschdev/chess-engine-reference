@@ -7,6 +7,20 @@ import com.backend.util.Util;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Problem: Need to manage chess game state across multiple moves, track turn order,
+ * captured pieces, and detect check/checkmate conditions.
+ * 
+ * Goal: Provide a high-level game controller that coordinates move validation,
+ * turn management, and win condition detection.
+ * 
+ * Approach: Delegates move validation to Chessboard. Maintains game state (Free, Check, Checkmate),
+ * current turn (White/Black), and sets of captured pieces. After each move, checks for
+ * check and checkmate conditions for the next player.
+ * 
+ * Time: O(n) per move where n is the number of pieces (for check/checkmate detection)
+ * Space: O(1) additional space beyond the board representation
+ */
 public class ChessGame {
     private GameState gameState;
 

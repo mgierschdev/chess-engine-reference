@@ -13,6 +13,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Problem: Need to expose chess game functionality via HTTP REST API for a web frontend.
+ * 
+ * Goal: Provide endpoints for starting/ending games, making moves, querying valid moves,
+ * and retrieving game state. Maintain single in-memory game instance per server.
+ * 
+ * Approach: Spring Boot REST controller with GET/POST endpoints. Singleton game instance
+ * stored as instance variable (lost on server restart). CORS configured for localhost:3000.
+ * Delegates all game logic to ChessGame domain class.
+ * 
+ * Time: O(1) for game state queries, O(n) for moves (delegated to ChessGame)
+ * Space: O(1) per game (one game instance stored)
+ * 
+ * Tags: rest-api, spring-boot, game-controller
+ */
 @CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:3000"})
 @RestController
 public class ChessController {
