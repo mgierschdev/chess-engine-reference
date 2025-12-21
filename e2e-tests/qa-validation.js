@@ -6,6 +6,10 @@
  * This script acts as a real human user to validate that the chess application
  * works correctly from the perspective of a final user.
  * 
+ * Requirements:
+ * - Node.js 18+ (for native fetch API support)
+ * - Playwright (chromium browser)
+ * 
  * Test Scope:
  * - Backend and frontend start correctly
  * - REST API enforces chess rules
@@ -21,6 +25,7 @@ const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
 
 // Configuration
 const BACKEND_URL = 'http://localhost:8080';
@@ -51,6 +56,14 @@ function log(message, type = 'INFO') {
     'TEST': '▶'
   }[type] || '•';
   console.log(`[${timestamp}] ${prefix} ${message}`);
+}
+
+// Helper function to convert 1-indexed chess coordinates to board array index
+function getSquareIndex(row, col) {
+  // Board is stored as flattened array (row-major)
+  // 1-indexed coordinates: rows 1-8, cols 1-8
+  // Array index: (row-1) * 8 + (col-1)
+  return (row - 1) * 8 + (col - 1);
 }
 
 function recordPass(testName, details = '') {
@@ -115,6 +128,15 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 // Main test execution
 async function runTests() {
+  // Check Node.js version (require 18+ for native fetch)
+  const nodeVersion = parseInt(process.version.slice(1).split('.')[0]);
+  if (nodeVersion < 18) {
+    console.error('❌ Error: Node.js 18+ is required for native fetch API support');
+    console.error(`   Current version: ${process.version}`);
+    console.error('   Please upgrade Node.js to version 18 or higher');
+    process.exit(1);
+  }
+
   log('=================================================', 'INFO');
   log('Chess Engine - End-to-End QA Validation', 'INFO');
   log('=================================================', 'INFO');
@@ -132,10 +154,20 @@ async function runTests() {
 
     // Start backend
     log('Starting backend service...', 'INFO');
-    backendProcess = spawn('./gradlew', ['bootRun'], {
+    
+    // Validate paths exist before spawning
+    const fs = require('fs');
+    if (!fs.existsSync(BACKEND_DIR)) {
+      throw new Error(`Backend directory not found: ${BACKEND_DIR}`);
+    }
+    if (!fs.existsSync(path.join(BACKEND_DIR, 'gradlew'))) {
+      throw new Error(`gradlew not found in: ${BACKEND_DIR}`);
+    }
+    
+    const gradlewPath = path.join(BACKEND_DIR, 'gradlew');
+    backendProcess = spawn(gradlewPath, ['bootRun'], {
       cwd: BACKEND_DIR,
-      stdio: 'pipe',
-      shell: true
+      stdio: 'pipe'
     });
 
     backendProcess.stdout.on('data', (data) => {
@@ -162,10 +194,15 @@ async function runTests() {
 
     // Start frontend
     log('Starting frontend service...', 'INFO');
+    
+    // Validate frontend directory exists
+    if (!fs.existsSync(FRONTEND_DIR)) {
+      throw new Error(`Frontend directory not found: ${FRONTEND_DIR}`);
+    }
+    
     frontendProcess = spawn('npm', ['run', 'dev'], {
       cwd: FRONTEND_DIR,
-      stdio: 'pipe',
-      shell: true
+      stdio: 'pipe'
     });
 
     frontendProcess.stdout.on('data', (data) => {
@@ -263,9 +300,7 @@ async function runTests() {
 
         // Verify some piece positions (e.g., white pawn at e2)
         // Board uses 1-indexed coordinates: e2 = row 2, col 5
-        // Board array is flattened row-major, but we need to account for 1-indexing
-        // Array position for e2: (row-1) * 8 + (col-1) = (2-1)*8 + (5-1) = 1*8 + 4 = 12
-        const e2Index = (2-1) * 8 + (5-1); // e2: row 2, col 5 in 1-indexed
+        const e2Index = getSquareIndex(2, 5); // e2: row 2, col 5
         const e2Piece = board[e2Index];
         if (e2Piece && e2Piece.type === 'Pawn' && e2Piece.color === 'White') {
           recordPass('Initial Piece Positions', 'White pawn at e2');

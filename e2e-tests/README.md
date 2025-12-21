@@ -67,7 +67,7 @@ The QA validation script tests all requirements specified in the test plan:
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 18+ (required for native fetch support)
 - Backend and frontend **NOT already running** (script starts them)
 - Playwright browsers installed
 
