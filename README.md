@@ -77,6 +77,19 @@ make test       # Run all tests
 make docker-up  # Start with Docker
 ```
 
+### Validate Installation
+
+Run end-to-end tests to verify everything works:
+
+```bash
+cd e2e-tests
+npm install
+npx playwright install chromium
+npm test
+```
+
+This will start both services, run comprehensive tests, and generate a report.
+
 ## Architecture at a Glance
 
 ```mermaid
@@ -300,9 +313,35 @@ npm test
 
 **Philosophy**: Focus on component behavior and rendering. API calls are tested in integration tests.
 
+### End-to-End Tests
+
+**Location**: `e2e-tests/`
+
+**Coverage**:
+- ✅ **Application Boot** - Backend and frontend startup validation
+- ✅ **Game Initialization** - Board setup and initial state
+- ✅ **Legal Moves** - Basic move validation (e2-e4, e7-e5)
+- ✅ **Illegal Move Rejection** - Move validation and error handling
+- ✅ **Special Rules** - Valid moves API, pawn promotion, castling, en passant
+- ✅ **Check and Checkmate** - Fool's Mate detection
+- ✅ **Non-Goals Validation** - Documented limitations verification
+- ✅ **API Validation** - All REST endpoints
+- ✅ **Security Posture** - Authentication, secrets, CORS
+
+**Run Tests**:
+```bash
+cd e2e-tests
+npm install
+npx playwright install chromium
+npm test
+```
+
+**Philosophy**: Black box testing from a real user's perspective. Uses only public interfaces (HTTP API and browser UI). Tests behavior, not implementation.
+
+**CI Integration**: E2E tests run automatically on push via GitHub Actions workflow.
+
 ### What's Intentionally Missing
 
-- **E2E Tests**: No Playwright/Cypress tests (frontend + backend integration tested manually)
 - **Performance Tests**: No load testing (not a production service)
 - **Security Tests**: No penetration testing (local HTTP only)
 
