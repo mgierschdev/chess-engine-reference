@@ -20,15 +20,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * and retrieving game state. Maintain single in-memory game instance per server.
  * 
  * Approach: Spring Boot REST controller with GET/POST endpoints. Singleton game instance
- * stored as instance variable (lost on server restart). CORS configured for localhost:3000.
- * Delegates all game logic to ChessGame domain class.
+ * stored as instance variable (lost on server restart). CORS configured globally via
+ * CorsConfiguration. Delegates all game logic to ChessGame domain class.
  * 
  * Time: O(1) for game state queries, O(n) for moves (delegated to ChessGame)
  * Space: O(1) per game (one game instance stored)
  * 
  * Tags: rest-api, spring-boot, game-controller
  */
-@CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:3000"})
 @RestController
 public class ChessController {
     private final AtomicLong requestCount = new AtomicLong();
