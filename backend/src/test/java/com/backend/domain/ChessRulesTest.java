@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ChessRulesTest {
 
     @Test
-    @Disabled("TODO: Implement castling through check validation - current implementation may not prevent this")
+    @Disabled("TODO: Implement castling first, then add validation for castling through check")
     public void testCastlingThroughCheckIsRejected() {
         Chessboard chessboard = new Chessboard();
         ChessPiece[][] board = chessboard.getBoard();
@@ -88,7 +88,6 @@ public class ChessRulesTest {
     }
 
     @Test
-    @Disabled("TODO: Implement pinned piece validation - current implementation may allow pinned pieces to move")
     public void testPinnedPieceCannotExposeKing() {
         Chessboard chessboard = new Chessboard();
         ChessPiece[][] board = chessboard.getBoard();
@@ -130,7 +129,6 @@ public class ChessRulesTest {
     }
 
     @Test
-    @Disabled("TODO: Verify king cannot move into check - current implementation may have issues with this")
     public void testKingCannotMoveIntoCheck() {
         Chessboard chessboard = new Chessboard();
         ChessPiece[][] board = chessboard.getBoard();

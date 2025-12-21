@@ -154,7 +154,8 @@ public class Chessboard {
             for(int c = 0; c < board[r].length; c++){
                 ChessPiece piece = board[r][c];
                 if(piece.color() == opponent){
-                    Position[] moves = getValidMoves(new Position(r,c));
+                    // Use getCandidateMoves to avoid infinite recursion
+                    Position[] moves = getCandidateMoves(new Position(r,c), piece);
                     for(Position pos : moves){
                         if(pos.row == kingPos.row && pos.col == kingPos.col){
                             return true;
@@ -300,7 +301,21 @@ public class Chessboard {
         }
 
         ChessPiece chessPiece = board[position.row][position.col];
+        Position[] candidateMoves = getCandidateMoves(position, chessPiece);
 
+        // Filter out moves that would leave the player's king in check
+        return filterMovesLeavingKingInCheck(position, candidateMoves, chessPiece.color());
+    }
+
+    /**
+     * Gets candidate moves for a piece without checking king safety.
+     * This is used internally to avoid infinite recursion when checking if king is in check.
+     * 
+     * @param position The position of the piece
+     * @param chessPiece The piece to get moves for
+     * @return Array of candidate moves (may leave king in check)
+     */
+    private Position[] getCandidateMoves(Position position, ChessPiece chessPiece) {
         switch (chessPiece.type()) {
             case Pawn -> {
                 return getValidMovesPawn(position, chessPiece);
@@ -320,8 +335,41 @@ public class Chessboard {
             case Bishop -> {
                 return getValidMovesBishop(position, chessPiece);
             }
+            default -> {
+                return new Position[0];
+            }
         }
-        return new Position[0];
+    }
+
+    /**
+     * Filters out moves that would leave the player's king in check.
+     * Simulates each move and checks if the king is in check after the move.
+     * 
+     * @param from The source position
+     * @param candidateMoves All potential moves for the piece
+     * @param playerColor The color of the player making the move
+     * @return Array of legal moves that don't leave king in check
+     */
+    private Position[] filterMovesLeavingKingInCheck(Position from, Position[] candidateMoves, Color playerColor) {
+        List<Position> legalMoves = new ArrayList<>();
+        
+        for (Position to : candidateMoves) {
+            // Simulate the move
+            ChessPiece captured = simulateMove(from, to);
+            
+            // Check if this move leaves the king in check
+            boolean kingInCheck = isKingInCheck(playerColor);
+            
+            // Undo the move
+            undoMove(from, to, captured);
+            
+            // If the king is not in check after this move, it's legal
+            if (!kingInCheck) {
+                legalMoves.add(to);
+            }
+        }
+        
+        return legalMoves.toArray(Position[]::new);
     }
 
     private Position[] getValidMovesRock(Position position, ChessPiece chessPiece) {
