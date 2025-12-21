@@ -1,0 +1,15 @@
+{
+  "name": "chess-engine-e2e-tests",
+  "version": "1.0.0",
+  "description": "End-to-end QA validation tests for Chess Engine application",
+  "scripts": {
+    "test": "node qa-validation.js",
+    "test:report": "node qa-validation.js --report"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
