@@ -190,6 +190,25 @@ public class Chessboard {
         return true;
     }
 
+    public boolean isStalemate(Color color){
+        // Stalemate occurs when the player is NOT in check but has no legal moves
+        if(isKingInCheck(color)){
+            return false;
+        }
+        for(int r = 0; r < board.length; r++){
+            for(int c = 0; c < board[r].length; c++){
+                if(board[r][c].color() == color){
+                    Position from = new Position(r,c);
+                    Position[] moves = getValidMoves(from);
+                    if(moves.length > 0){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     private ChessPiece simulateMove(Position from, Position to){
         ChessPiece moving = board[from.row][from.col];
         ChessPiece captured = board[to.row][to.col];
