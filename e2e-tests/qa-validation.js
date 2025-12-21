@@ -262,9 +262,10 @@ async function runTests() {
         }
 
         // Verify some piece positions (e.g., white pawn at e2)
-        // Board is row-major: row 0 = rank 1, row 7 = rank 8
-        // e2 is row 1, col 4 (0-indexed)
-        const e2Index = 1 * 8 + 4; // row 1, col 4
+        // Board uses 1-indexed coordinates: e2 = row 2, col 5
+        // Board array is flattened row-major, but we need to account for 1-indexing
+        // Array position for e2: (row-1) * 8 + (col-1) = (2-1)*8 + (5-1) = 1*8 + 4 = 12
+        const e2Index = (2-1) * 8 + (5-1); // e2: row 2, col 5 in 1-indexed
         const e2Piece = board[e2Index];
         if (e2Piece && e2Piece.type === 'Pawn' && e2Piece.color === 'White') {
           recordPass('Initial Piece Positions', 'White pawn at e2');
@@ -287,8 +288,9 @@ async function runTests() {
     log('\n=== C. Basic Legal Moves ===', 'TEST');
 
     // Move e2 to e4 (white pawn)
-    const e2 = { row: 1, col: 4 };
-    const e4 = { row: 3, col: 4 };
+    // Using 1-indexed coordinates: e2 = row 2, col 5
+    const e2 = { row: 2, col: 5 };
+    const e4 = { row: 4, col: 5 };
     const move1Result = await apiCall('/move', 'POST', {
       source: e2,
       target: e4,
@@ -310,8 +312,9 @@ async function runTests() {
     }
 
     // Move e7 to e5 (black pawn)
-    const e7 = { row: 6, col: 4 };
-    const e5 = { row: 4, col: 4 };
+    // Using 1-indexed coordinates: e7 = row 7, col 5
+    const e7 = { row: 7, col: 5 };
+    const e5 = { row: 5, col: 5 };
     const move2Result = await apiCall('/move', 'POST', {
       source: e7,
       target: e5,
@@ -330,9 +333,9 @@ async function runTests() {
     log('\n=== D. Illegal Move Rejection ===', 'TEST');
 
     // Try to move a knight like a bishop (illegal)
-    // White knight is at b1 (row 0, col 1)
-    const b1 = { row: 0, col: 1 };
-    const d3 = { row: 2, col: 3 };
+    // White knight is at b1 (row 1, col 2) in 1-indexed coordinates
+    const b1 = { row: 1, col: 2 };
+    const d3 = { row: 3, col: 4 };
     const illegalMoveResult = await apiCall('/move', 'POST', {
       source: b1,
       target: d3,
@@ -369,7 +372,8 @@ async function runTests() {
     recordWarning('Pawn promotion full test requires complete game - testing API parameter only');
     
     // Test valid moves API
-    const validMovesE2 = await apiCall('/getValidMoves', 'POST', { row: 1, col: 4 });
+    // Using 1-indexed coordinates: e2 = row 2, col 5
+    const validMovesE2 = await apiCall('/getValidMoves', 'POST', { row: 2, col: 5 });
     if (validMovesE2.ok && Array.isArray(validMovesE2.data) && validMovesE2.data.length > 0) {
       recordPass('Get Valid Moves API', `e2 pawn has ${validMovesE2.data.length} valid moves`);
     } else {
@@ -392,11 +396,12 @@ async function runTests() {
     await apiCall('/startGame');
 
     // Fool's Mate: 1. f3 e5 2. g4 Qh4#
+    // Using 1-indexed coordinates
     const moves = [
-      { source: { row: 1, col: 5 }, target: { row: 2, col: 5 } }, // f2-f3
-      { source: { row: 6, col: 4 }, target: { row: 4, col: 4 } }, // e7-e5
-      { source: { row: 1, col: 6 }, target: { row: 3, col: 6 } }, // g2-g4
-      { source: { row: 7, col: 3 }, target: { row: 3, col: 7 } }  // Qd8-Qh4 (checkmate)
+      { source: { row: 2, col: 6 }, target: { row: 3, col: 6 } }, // f2-f3 (row 2, col 6 to row 3, col 6)
+      { source: { row: 7, col: 5 }, target: { row: 5, col: 5 } }, // e7-e5 (row 7, col 5 to row 5, col 5)
+      { source: { row: 2, col: 7 }, target: { row: 4, col: 7 } }, // g2-g4 (row 2, col 7 to row 4, col 7)
+      { source: { row: 8, col: 4 }, target: { row: 4, col: 8 } }  // Qd8-Qh4 (row 8, col 4 to row 4, col 8)
     ];
 
     for (const move of moves) {
@@ -414,8 +419,8 @@ async function runTests() {
 
     // Verify no further moves allowed (attempt to move after checkmate)
     const moveAfterCheckmate = await apiCall('/move', 'POST', {
-      source: { row: 0, col: 4 },
-      target: { row: 1, col: 4 },
+      source: { row: 1, col: 5 },  // e1 king (1-indexed)
+      target: { row: 2, col: 5 },  // e2
       promotionType: 'Queen'
     });
 
