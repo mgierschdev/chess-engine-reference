@@ -5,7 +5,7 @@ import {ChessPieceType, Color} from "@/app/_models/enums";
 
 export class ChessService {
 
-   private Api = "http://localhost:8080/";
+   private Api = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/";
 
     public async startGame(): Promise<ChessGame>{
         return this.get('startGame');
