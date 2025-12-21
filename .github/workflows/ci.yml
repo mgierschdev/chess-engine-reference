@@ -80,6 +80,8 @@ jobs:
         npm test -- --passWithNoTests
     
     - name: Build
+      env:
+        NEXT_TELEMETRY_DISABLED: 1
       run: |
         cd frontend
         npm run build
