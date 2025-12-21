@@ -38,6 +38,14 @@ public class Chessboard {
     // Square that can be targeted by an en passant capture
     private Position enPassantTarget;
 
+    // Track if kings and rooks have moved (for castling)
+    private boolean whiteKingMoved = false;
+    private boolean blackKingMoved = false;
+    private boolean whiteKingsideRookMoved = false;
+    private boolean whiteQueensideRookMoved = false;
+    private boolean blackKingsideRookMoved = false;
+    private boolean blackQueensideRookMoved = false;
+
     public Chessboard() {
         board = GetInitMatrixBoard();
         invalid = new ChessPiece(ChessPieceType.Invalid, Color.None);
@@ -78,6 +86,10 @@ public class Chessboard {
                 target.col == enPassantTarget.col &&
                 Math.abs(source.col - target.col) == 1;
 
+        // Check for castling
+        boolean isCastling = sourcePosition.type() == ChessPieceType.King &&
+                Math.abs(target.col - source.col) == 2;
+
         // reset en passant target; will be set again if this move is a double step
         enPassantTarget = null;
 
@@ -96,8 +108,52 @@ public class Chessboard {
             return captured;
         }
 
+        // Handle castling - move both king and rook
+        if (isCastling) {
+            int rookSourceCol = target.col > source.col ? 7 : 0; // Kingside or queenside
+            int rookTargetCol = target.col > source.col ? target.col - 1 : target.col + 1;
+            
+            ChessPiece rook = board[source.row][rookSourceCol];
+            board[source.row][source.col] = emptySpace;
+            board[target.row][target.col] = sourcePosition;
+            board[source.row][rookSourceCol] = emptySpace;
+            board[source.row][rookTargetCol] = rook;
+            
+            // Mark king as moved
+            if (player == Color.White) {
+                whiteKingMoved = true;
+            } else {
+                blackKingMoved = true;
+            }
+            
+            return emptySpace;
+        }
+
         board[source.row][source.col] = emptySpace;
         board[target.row][target.col] = sourcePosition;
+
+        // Track king and rook moves for castling eligibility
+        if (sourcePosition.type() == ChessPieceType.King) {
+            if (player == Color.White) {
+                whiteKingMoved = true;
+            } else {
+                blackKingMoved = true;
+            }
+        } else if (sourcePosition.type() == ChessPieceType.Rock) {
+            if (player == Color.White) {
+                if (source.row == 0 && source.col == 0) {
+                    whiteQueensideRookMoved = true;
+                } else if (source.row == 0 && source.col == 7) {
+                    whiteKingsideRookMoved = true;
+                }
+            } else {
+                if (source.row == 7 && source.col == 0) {
+                    blackQueensideRookMoved = true;
+                } else if (source.row == 7 && source.col == 7) {
+                    blackKingsideRookMoved = true;
+                }
+            }
+        }
 
         if (sourcePosition.type() == ChessPieceType.Pawn && Math.abs(target.row - source.row) == 2) {
             enPassantTarget = new Position((source.row + target.row) / 2, source.col);
@@ -321,6 +377,13 @@ public class Chessboard {
 
         ChessPiece chessPiece = board[position.row][position.col];
         Position[] candidateMoves = getCandidateMoves(position, chessPiece);
+        
+        // For kings, add castling moves before filtering
+        if (chessPiece.type() == ChessPieceType.King) {
+            List<Position> withCastling = new ArrayList<>(Arrays.asList(candidateMoves));
+            addCastlingMoves(position, withCastling, chessPiece.color());
+            candidateMoves = withCastling.toArray(Position[]::new);
+        }
 
         // Filter out moves that would leave the player's king in check
         return filterMovesLeavingKingInCheck(position, candidateMoves, chessPiece.color());
@@ -346,7 +409,7 @@ public class Chessboard {
                 return getValidMovesQueen(position, chessPiece);
             }
             case King -> {
-                return getValidMovesKing(position, chessPiece);
+                return getValidMovesKingBasic(position, chessPiece);
             }
             case Rock -> {
                 return getValidMovesRock(position, chessPiece);
@@ -371,8 +434,19 @@ public class Chessboard {
      */
     private Position[] filterMovesLeavingKingInCheck(Position from, Position[] candidateMoves, Color playerColor) {
         List<Position> legalMoves = new ArrayList<>();
+        ChessPiece piece = board[from.row][from.col];
+        boolean isKing = piece.type() == ChessPieceType.King;
         
         for (Position to : candidateMoves) {
+            // Castling moves are already validated and don't need simulation
+            // (king moves 2 squares horizontally)
+            boolean isCastlingMove = isKing && Math.abs(to.col - from.col) == 2;
+            
+            if (isCastlingMove) {
+                legalMoves.add(to);
+                continue;
+            }
+            
             // Simulate the move
             ChessPiece captured = simulateMove(from, to);
             
@@ -421,7 +495,114 @@ public class Chessboard {
         return valid.toArray(Position[]::new);
     }
 
-    private Position[] getValidMovesKing(Position position, ChessPiece chessPiece) {
+    /**
+     * Adds castling moves if conditions are met.
+     * Castling is allowed if:
+     * 1. King hasn't moved
+     * 2. Rook hasn't moved
+     * 3. No pieces between king and rook
+     * 4. King is not in check
+     * 5. King doesn't move through check
+     * 6. King doesn't land in check
+     */
+    private void addCastlingMoves(Position kingPos, List<Position> valid, Color color) {
+        // Check if king is in check - can't castle out of check
+        if (isKingInCheck(color)) {
+            return;
+        }
+
+        if (color == Color.White) {
+            // White kingside castling
+            if (!whiteKingMoved && !whiteKingsideRookMoved &&
+                kingPos.row == 0 && kingPos.col == 4) {
+                if (canCastleKingside(0, color)) {
+                    valid.add(new Position(0, 6));
+                }
+            }
+            // White queenside castling
+            if (!whiteKingMoved && !whiteQueensideRookMoved &&
+                kingPos.row == 0 && kingPos.col == 4) {
+                if (canCastleQueenside(0, color)) {
+                    valid.add(new Position(0, 2));
+                }
+            }
+        } else {
+            // Black kingside castling
+            if (!blackKingMoved && !blackKingsideRookMoved &&
+                kingPos.row == 7 && kingPos.col == 4) {
+                if (canCastleKingside(7, color)) {
+                    valid.add(new Position(7, 6));
+                }
+            }
+            // Black queenside castling
+            if (!blackKingMoved && !blackQueensideRookMoved &&
+                kingPos.row == 7 && kingPos.col == 4) {
+                if (canCastleQueenside(7, color)) {
+                    valid.add(new Position(7, 2));
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if kingside castling is possible (no pieces between, king doesn't move through check).
+     */
+    private boolean canCastleKingside(int row, Color color) {
+        // Check squares between king and rook are empty
+        if (board[row][5].type() != ChessPieceType.Empty || 
+            board[row][6].type() != ChessPieceType.Empty) {
+            return false;
+        }
+
+        // Check king doesn't move through check (squares f1/f8 and g1/g8)
+        return !isSquareUnderAttack(new Position(row, 5), color) &&
+               !isSquareUnderAttack(new Position(row, 6), color);
+    }
+
+    /**
+     * Check if queenside castling is possible (no pieces between, king doesn't move through check).
+     */
+    private boolean canCastleQueenside(int row, Color color) {
+        // Check squares between king and rook are empty
+        if (board[row][1].type() != ChessPieceType.Empty || 
+            board[row][2].type() != ChessPieceType.Empty ||
+            board[row][3].type() != ChessPieceType.Empty) {
+            return false;
+        }
+
+        // Check king doesn't move through check (squares d1/d8 and c1/c8)
+        // Note: b1/b8 doesn't need to be safe, only the king's path
+        return !isSquareUnderAttack(new Position(row, 3), color) &&
+               !isSquareUnderAttack(new Position(row, 2), color);
+    }
+
+    /**
+     * Check if a square is under attack by the opponent.
+     */
+    private boolean isSquareUnderAttack(Position square, Color defendingColor) {
+        Color attackingColor = getOpposite(defendingColor);
+        
+        for (int r = 0; r < board.length; r++) {
+            for (int c = 0; c < board[r].length; c++) {
+                ChessPiece piece = board[r][c];
+                if (piece.color() == attackingColor) {
+                    Position[] moves = getCandidateMoves(new Position(r, c), piece);
+                    for (Position move : moves) {
+                        if (move.row == square.row && move.col == square.col) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets basic king moves (one square in any direction) without castling.
+     * Used by getCandidateMoves to avoid infinite recursion.
+     */
+    private Position[] getValidMovesKingBasic(Position position, ChessPiece chessPiece) {
         if (chessPiece.type() != ChessPieceType.King) {
             return new Position[0];
         }

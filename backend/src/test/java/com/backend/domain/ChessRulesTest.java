@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ChessRulesTest {
 
     @Test
-    @Disabled("TODO: Implement castling first, then add validation for castling through check")
     public void testCastlingThroughCheckIsRejected() {
         Chessboard chessboard = new Chessboard();
         ChessPiece[][] board = chessboard.getBoard();
@@ -32,7 +31,12 @@ public class ChessRulesTest {
         board[0][3] = new ChessPiece(ChessPieceType.Empty, Color.None); // d1
         
         // Place a black bishop to attack d1 (king would pass through)
-        board[3][6] = new ChessPiece(ChessPieceType.Bishop, Color.Black);
+        // Bishop on h5 attacks the d1-h5 diagonal
+        board[4][7] = new ChessPiece(ChessPieceType.Bishop, Color.Black);
+        
+        // Clear the path from bishop to d1
+        board[1][3] = new ChessPiece(ChessPieceType.Empty, Color.None); // d2 pawn  
+        board[1][4] = new ChessPiece(ChessPieceType.Empty, Color.None); // e2 pawn
         
         // Attempt to castle queenside (king at e1 moves through d1 which is under attack)
         Position[] validMoves = chessboard.getValidMoves(new Position(0, 4));
