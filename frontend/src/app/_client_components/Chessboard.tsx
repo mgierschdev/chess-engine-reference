@@ -28,7 +28,7 @@ import PromotionModal from "@/app/_client_components/PromotionModal";
 
 let gameService: ChessService = new ChessService();
 
-export default function Chessboard({gameInfo, isBotMode}: any) {
+export default function Chessboard({gameInfo, isBotMode, onGameInfoUpdate}: any) {
     let [chessboard, setChessboard] = useState(gameInfo?.chessboard || []);
     let [allowedPositions, setAllowedPositions ]= useState(new Set());
     let [selectedPiece, setSelectedPiece] = useState(-1);
@@ -182,6 +182,11 @@ export default function Chessboard({gameInfo, isBotMode}: any) {
                 }
             }
         ));
+        
+        // Notify parent component of the updated game state
+        if (onGameInfoUpdate) {
+            onGameInfoUpdate(game);
+        }
     }
 
     //1 2 3 4 5 6 7 8 9 10 .... 64  % 8 = col

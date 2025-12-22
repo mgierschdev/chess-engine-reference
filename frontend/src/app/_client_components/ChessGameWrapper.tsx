@@ -47,7 +47,11 @@ export default function ChessGameWrapper({gameInfo: initialGameInfo}: {gameInfo:
     return (
         <>
             <div className="left-panel">
-                <Chessboard gameInfo={gameInfo} isBotMode={isBotMode}/>
+                <Chessboard 
+                    gameInfo={gameInfo} 
+                    isBotMode={isBotMode}
+                    onGameInfoUpdate={handleGameInfoUpdate}
+                />
             </div>
 
             <div className="right-panel">
