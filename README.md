@@ -8,7 +8,8 @@ A full-stack chess application demonstrating RESTful architecture, chess rule en
 
 This project is a **portfolio-grade demonstration** of:
 
-- **Chess Engine Logic**: Complete implementation of chess rules including move validation, check/checkmate detection, en passant, castling, and pawn promotion
+- **Chess Engine Logic**: Complete implementation of chess rules including move validation, check/checkmate detection, stalemate, draw conditions, castling (with full validation), en passant, pawn promotion, and move history tracking
+- **PGN Export**: Export games in standard Portable Game Notation format
 - **RESTful API Design**: Clean separation of concerns with a Spring Boot backend exposing chess operations via HTTP
 - **Modern Frontend**: React-based TypeScript UI using Next.js 13 with server and client components
 - **Full-Stack Integration**: Real-world example of frontend-backend communication with CORS handling
@@ -179,6 +180,8 @@ Start the backend and navigate to Swagger UI to explore endpoints, request/respo
 | `GET` | `/chessGame` | Get current game state |
 | `POST` | `/move` | Make a chess move |
 | `POST` | `/getValidMoves` | Get valid moves for a piece |
+| `GET` | `/moveHistory` | Get all moves made in current game |
+| `GET` | `/exportPGN` | Export current game in PGN format |
 
 ### Example API Calls
 
@@ -210,6 +213,16 @@ curl -X POST http://localhost:8080/getValidMoves \
   -d '{"row": 2, "col": 5}'
 ```
 
+**Get move history:**
+```bash
+curl http://localhost:8080/moveHistory
+```
+
+**Export game to PGN:**
+```bash
+curl http://localhost:8080/exportPGN
+```
+
 ## Non-Goals
 
 This project **intentionally does NOT include**:
@@ -219,8 +232,6 @@ This project **intentionally does NOT include**:
 ❌ **Persistence** - No database; game state is in-memory only  
 ❌ **Authentication** - No user accounts or login system  
 ❌ **Production Hardening** - No load balancing, caching, or cloud deployment  
-❌ **Move History Export** - No PGN/FEN notation support  
-❌ **Draw Detection** - Stalemate, threefold repetition, 50-move rule not implemented  
 
 These are **design choices**, not oversights. The project focuses on core chess logic and full-stack patterns.
 
@@ -231,20 +242,20 @@ These are **design choices**, not oversights. The project focuses on core chess 
 - **In-Memory Game State**: Game is lost on server restart (no database)
 - **Single Game Instance**: Only one game can run per server
 - **Two Local Players**: Designed for hotseat play on the same machine
-- **No Undo/Redo**: Move history is not tracked
 - **No Time Controls**: No chess clocks or time limits
 
-### Future Improvements
+### Recently Implemented
 
-The following features are **documented TODOs** for future enhancement:
+The following features have been recently added:
 
-- [ ] **Stalemate Detection** - Currently not implemented
-- [ ] **Castling Through Check** - May not be fully validated (see `ChessRulesTest`)
-- [ ] **Pinned Piece Validation** - Edge cases may exist (see `ChessRulesTest`)
-- [ ] **Move History** - Track all moves in a game
-- [ ] **PGN Export** - Save games in standard chess notation
+- [x] **Stalemate Detection** - Detects draw by stalemate
+- [x] **Castling Through Check** - Fully validated (kingside and queenside)
+- [x] **Pinned Piece Validation** - All edge cases handled
+- [x] **Move History** - Tracks all moves in a game
+- [x] **PGN Export** - Export games in standard chess notation
+- [x] **Draw Detection** - Stalemate, threefold repetition, 50-move rule
 
-See disabled tests in `backend/src/test/java/com/backend/domain/ChessRulesTest.java` for details.
+See tests in `backend/src/test/java/com/backend/domain/` for implementation details.
 
 ## Design Decisions
 
@@ -395,11 +406,9 @@ No live demo is hosted. Run locally with `make dev` or `make docker-up`.
 ### Planned Enhancements
 
 - [ ] **Extract Chess Engine** - Separate core logic into reusable library
-- [ ] **Stalemate Detection** - Implement draw by stalemate
-- [ ] **Move History** - Track and display all moves in a game
-- [ ] **PGN/FEN Support** - Import/export games in standard notation
 - [ ] **Undo/Redo** - Allow players to take back moves
 - [ ] **Optional AI Opponent** - Basic minimax algorithm (future module)
+- [ ] **FEN Import** - Import games from FEN notation
 
 ### Not Planned
 
