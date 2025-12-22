@@ -38,7 +38,11 @@ export default function CapturedPieces({pieces, color}: CapturedPiecesProps) {
             gap: '4px',
             fontSize: '24px',
             minHeight: '30px',
-            alignItems: 'center'
+            alignItems: 'center',
+            backgroundColor: '#f0f0f0',
+            padding: '8px',
+            borderRadius: '4px',
+            border: '1px solid #ccc'
         }}>
             {Object.entries(pieceCounts).map(([type, count]) => (
                 <div key={type} style={{ display: 'flex', alignItems: 'center' }}>
@@ -47,7 +51,10 @@ export default function CapturedPieces({pieces, color}: CapturedPiecesProps) {
                             key={`${type}-${index}`}
                             style={{ 
                                 marginRight: '2px',
-                                filter: color === 'White' ? 'invert(1)' : 'none'
+                                color: color === 'White' ? '#FFFFFF' : '#000000',
+                                textShadow: color === 'White' 
+                                    ? '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+                                    : 'none'
                             }}
                         >
                             {pieceSymbols[type] || ''}
