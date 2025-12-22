@@ -37,7 +37,6 @@ export default function Chessboard({gameInfo, isBotMode, onGameInfoUpdate}: any)
     let [showPromotion, setShowPromotion] = useState(false);
     let [promotionMove, setPromotionMove] = useState<{source: Position, target: Position} | null>(null);
     let [isComputerThinking, setIsComputerThinking] = useState(false);
-    let chessPieces = printChessBoard();
 
     // Reset board state when gameInfo changes (e.g., when game ends/starts)
     useEffect(() => {
@@ -210,7 +209,7 @@ export default function Chessboard({gameInfo, isBotMode, onGameInfoUpdate}: any)
                 </div>
             )}
             <div className="chessboard-grid">
-                {chessPieces}
+                {printChessBoard()}
             </div>
         </>
     );
