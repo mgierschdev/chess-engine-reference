@@ -791,6 +791,33 @@ public class Chessboard {
     }
     
     /**
+     * Restores the board state from a board array and castling state.
+     * Used for undo/redo functionality.
+     */
+    public void restoreState(ChessPiece[][] boardState, Position enPassant,
+                           boolean whiteKMoved, boolean blackKMoved,
+                           boolean whiteKRMoved, boolean whiteQRMoved,
+                           boolean blackKRMoved, boolean blackQRMoved) {
+        // Copy board state
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                board[row][col] = boardState[row][col];
+            }
+        }
+        
+        // Restore castling rights
+        whiteKingMoved = whiteKMoved;
+        blackKingMoved = blackKMoved;
+        whiteKingsideRookMoved = whiteKRMoved;
+        whiteQueensideRookMoved = whiteQRMoved;
+        blackKingsideRookMoved = blackKRMoved;
+        blackQueensideRookMoved = blackQRMoved;
+        
+        // Restore en passant target
+        enPassantTarget = enPassant;
+    }
+    
+    /**
      * Gets castling rights for FEN export.
      */
     public boolean getWhiteKingMoved() {

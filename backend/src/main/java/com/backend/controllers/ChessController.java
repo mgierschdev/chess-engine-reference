@@ -243,4 +243,73 @@ public class ChessController {
         
         return new MessageResponse(requestCount.incrementAndGet(), chessGame.exportToFEN());
     }
+
+    @Operation(
+        summary = "Undo last move",
+        description = "Undoes the last move and restores the previous game state."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Move undone successfully or nothing to undo",
+                     content = @Content(schema = @Schema(implementation = ChessGameResponse.class)))
+    })
+    @GetMapping("/undo")
+    public ChessGameResponse undo() {
+        if (chessGame == null) {
+            chessGameResponse.content = "Game not started";
+            return chessGameResponse;
+        }
+        
+        if (chessGame.undo()) {
+            SetChessResponse();
+            chessGameResponse.content = "Move undone";
+        } else {
+            SetChessResponse();
+            chessGameResponse.content = "Nothing to undo";
+        }
+        
+        return chessGameResponse;
+    }
+
+    @Operation(
+        summary = "Redo previously undone move",
+        description = "Redoes the last undone move."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Move redone successfully or nothing to redo",
+                     content = @Content(schema = @Schema(implementation = ChessGameResponse.class)))
+    })
+    @GetMapping("/redo")
+    public ChessGameResponse redo() {
+        if (chessGame == null) {
+            chessGameResponse.content = "Game not started";
+            return chessGameResponse;
+        }
+        
+        if (chessGame.redo()) {
+            SetChessResponse();
+            chessGameResponse.content = "Move redone";
+        } else {
+            SetChessResponse();
+            chessGameResponse.content = "Nothing to redo";
+        }
+        
+        return chessGameResponse;
+    }
+
+    @Operation(
+        summary = "Check undo/redo availability",
+        description = "Returns whether undo and redo operations are currently available."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Undo/redo status returned")
+    })
+    @GetMapping("/undoRedoStatus")
+    public MessageResponse undoRedoStatus() {
+        if (chessGame == null) {
+            return new MessageResponse(requestCount.incrementAndGet(), "false,false");
+        }
+        
+        String status = chessGame.canUndo() + "," + chessGame.canRedo();
+        return new MessageResponse(requestCount.incrementAndGet(), status);
+    }
 }
