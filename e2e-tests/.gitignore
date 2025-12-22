@@ -3,3 +3,7 @@ node_modules/
 test-results/
 playwright-report/
 *.log
+inspect-ui.js
+detailed-inspect.js
+position-mapping.js
+ui-screenshot.png

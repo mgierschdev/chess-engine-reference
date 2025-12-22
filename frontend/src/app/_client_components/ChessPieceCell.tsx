@@ -1,6 +1,7 @@
 'use client';
 import {ChessPieceType, Color} from "@/app/_models/enums";
 import {ChessPiece} from "@/app/_models/ChessPiece";
+import {getPosition} from "./ChessUtil";
 
 export default function ChessPieceCell({chessPiece, onCellClick}: any) {
     function getChessPieceClass(chessPiece: ChessPiece): string {
@@ -20,11 +21,17 @@ export default function ChessPieceCell({chessPiece, onCellClick}: any) {
         return className;
     }
 
+    // Get row and col for data attributes
+    const position = getPosition(chessPiece.position);
+
     return (
         <div
             draggable={chessPiece.isDraggable}
             onClick={() => { return onCellClick(chessPiece);}}
-            className={getChessPieceClass(chessPiece)}>
+            className={getChessPieceClass(chessPiece)}
+            data-position={chessPiece.position}
+            data-row={position.row}
+            data-col={position.col}>
         </div>
     );
 }
