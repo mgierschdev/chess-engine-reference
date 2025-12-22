@@ -1,9 +1,10 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ChessService} from "@/app/_services/ChessService";
 import {ChessGame} from "@/app/_models/ChessGame";
 import {GameState} from "@/app/_models/enums";
+import MoveHistory from "./MoveHistory";
 
 // Game Service
 let gameService: ChessService = new ChessService();
@@ -12,6 +13,11 @@ export default function RightSidePanel({gameInfoProp, onBotModeChange, onGameInf
 
     const [gameInfo, setGameInfo] = useState(gameInfoProp);
     const [isBotMode, setIsBotMode] = useState(false);
+
+    // Update local state when prop changes
+    useEffect(() => {
+        setGameInfo(gameInfoProp);
+    }, [gameInfoProp]);
 
     async function startGame(): Promise<void> {
         let response: ChessGame;
@@ -62,6 +68,10 @@ export default function RightSidePanel({gameInfoProp, onBotModeChange, onGameInf
             <div
                 className="right-side-panel-item">
                 Turn: {gameInfo.turn}
+            </div>
+
+            <div className="right-side-panel-item" style={{ marginTop: '20px' }}>
+                <MoveHistory moves={gameInfo.moveHistory || []} />
             </div>
 
             <div

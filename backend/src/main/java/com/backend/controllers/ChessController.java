@@ -190,6 +190,7 @@ public class ChessController {
             chessGameResponse.turn = Color.None;
             chessGameResponse.chessboard = Chessboard.GetArrayBoard(Chessboard.GetInitMatrixBoard());
             chessGameResponse.gameState = GameState.Free;
+            chessGameResponse.moveHistory = new java.util.ArrayList<>();
             return;
         }
         chessGameResponse.id = requestCount.incrementAndGet();
@@ -199,6 +200,7 @@ public class ChessController {
         chessGameResponse.capturedBlack = chessGame.getCaptured(Color.Black);
         chessGameResponse.capturedWhite = chessGame.getCaptured(Color.White);
         chessGameResponse.gameStarted = true;
+        chessGameResponse.moveHistory = chessGame.getMoveHistory();
     }
 
     @Operation(
