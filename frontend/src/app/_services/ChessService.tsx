@@ -31,30 +31,40 @@ export class ChessService {
             promotionType: promotionType
         };
         const response = await this.post('move', request);
-        return response.chessPiece.type == ChessPieceType.Empty;
+        return response && response.chessPiece && response.chessPiece.type == ChessPieceType.Empty;
     }
 
     private async post(endpoint: any, request: any){
-        const res = await fetch(this.Api.concat(endpoint), {
-            cache: 'no-store',
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(request)
-        });
-        if(!res.ok){
-            // throw new Error(('Failed to fetch data'));
+        try {
+            const res = await fetch(this.Api.concat(endpoint), {
+                cache: 'no-store',
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(request)
+            });
+            if(!res.ok){
+                // throw new Error(('Failed to fetch data'));
+            }
+            return res.json();
+        } catch (error) {
+            console.error("Failed to fetch:", error);
+            return null;
         }
-        return res.json();
     }
 
     private async get(endpoint: any) {
-        const res = await fetch(this.Api.concat(endpoint), { cache: 'no-store' });
-        if (!res.ok) {
-            // throw new Error('Failed to fetch data');
+        try {
+            const res = await fetch(this.Api.concat(endpoint), { cache: 'no-store' });
+            if (!res.ok) {
+                // throw new Error('Failed to fetch data');
+            }
+            return res.json();
+        } catch (error) {
+            console.error("Failed to fetch:", error);
+            return null;
         }
-        return res.json();
     }
 }

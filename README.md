@@ -335,6 +335,8 @@ npm test
 - ✅ **Illegal Move Rejection** - Move validation and error handling
 - ✅ **Special Rules** - Valid moves API, pawn promotion, castling, en passant
 - ✅ **Check and Checkmate** - Fool's Mate detection
+- ✅ **Complete Game** - Scholar's Mate end-to-end scenario
+- ✅ **UI Interactions** - Chessboard loading, move highlighting, invalid move rejection
 - ✅ **Non-Goals Validation** - Documented limitations verification
 - ✅ **API Validation** - All REST endpoints
 - ✅ **Security Posture** - Authentication, secrets, CORS
@@ -344,17 +346,22 @@ npm test
 cd e2e-tests
 npm install
 npx playwright install chromium
-npm test
+npm test          # Run UI browser tests
+npm run test:legacy  # Run legacy API-focused tests
 ```
 
 **Philosophy**: Black box testing from a real user's perspective. Uses only public interfaces (HTTP API and browser UI). Tests behavior, not implementation.
 
-**CI Integration**: E2E tests run automatically on push via GitHub Actions workflow.
+**UI Browser Tests** (`tests/chess-ui.test.ts`):
+- Browser-based tests using Playwright
+- Test complete game scenarios (e.g., Scholar's Mate)
+- Validate UI rendering and interactions
+- Run with `npm test` (starts services automatically via webServer config)
 
-### What's Intentionally Missing
-
-- **Performance Tests**: No load testing (not a production service)
-- **Security Tests**: No penetration testing (local HTTP only)
+**Legacy API-Focused Tests** (`tests/chess-api.test.ts`):
+- API-centric tests for core functionality
+- Validate request/response schemas and status codes
+- Run with `npm run test:legacy`
 
 ## Security
 
