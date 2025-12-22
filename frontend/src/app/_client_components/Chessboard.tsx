@@ -77,11 +77,14 @@ export default function Chessboard({gameInfo, isBotMode}: any) {
             let moved = await gameService.move(source, clickedPosition);
 
             if(moved){
-                gameInfo = await gameService.getChessGame();
+                // Update the board state immediately after move
                 await updateChessBoard();
                 
+                // Get the latest game info for bot mode check
+                const latestGame = await gameService.getChessGame();
+                
                 // If bot mode and it's black's turn, make AI move
-                if (isBotMode && gameInfo.turn === Color.Black && gameState !== GameState.Checkmate) {
+                if (isBotMode && latestGame.turn === Color.Black && latestGame.gameState !== GameState.Checkmate) {
                     await makeComputerMove();
                 }
                 return;
@@ -111,11 +114,13 @@ export default function Chessboard({gameInfo, isBotMode}: any) {
         if(promotionMove){
             let moved = await gameService.move(promotionMove.source, promotionMove.target, type);
             if(moved){
-                gameInfo = await gameService.getChessGame();
                 await updateChessBoard();
                 
+                // Get the latest game info for bot mode check
+                const latestGame = await gameService.getChessGame();
+                
                 // If bot mode and it's black's turn, make AI move
-                if (isBotMode && gameInfo.turn === Color.Black && gameState !== GameState.Checkmate) {
+                if (isBotMode && latestGame.turn === Color.Black && latestGame.gameState !== GameState.Checkmate) {
                     await makeComputerMove();
                 }
             }
@@ -135,7 +140,6 @@ export default function Chessboard({gameInfo, isBotMode}: any) {
             if (aiMove) {
                 const moved = await gameService.move(aiMove.from, aiMove.to);
                 if (moved) {
-                    gameInfo = await gameService.getChessGame();
                     await updateChessBoard();
                 }
             }
