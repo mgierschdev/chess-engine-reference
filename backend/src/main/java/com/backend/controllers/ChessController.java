@@ -200,4 +200,47 @@ public class ChessController {
         chessGameResponse.capturedWhite = chessGame.getCaptured(Color.White);
         chessGameResponse.gameStarted = true;
     }
+
+    @Operation(
+        summary = "Import game position from FEN",
+        description = "Imports a chess position from FEN (Forsyth-Edwards Notation) string. This resets the current game to the specified position."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Position imported successfully",
+                     content = @Content(schema = @Schema(implementation = ChessGameResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid FEN string",
+                     content = @Content(schema = @Schema(implementation = MessageResponse.class)))
+    })
+    @PostMapping("/importFEN")
+    public Object importFEN(@RequestBody String fen) {
+        if (chessGame == null) {
+            return new MessageResponse(requestCount.incrementAndGet(), "Game not started. Please start a game first.");
+        }
+        
+        try {
+            chessGame.importFromFEN(fen);
+            SetChessResponse();
+            chessGameResponse.content = "Position imported from FEN successfully";
+            return chessGameResponse;
+        } catch (IllegalArgumentException e) {
+            return new MessageResponse(requestCount.incrementAndGet(), "Invalid FEN string: " + e.getMessage());
+        }
+    }
+
+    @Operation(
+        summary = "Export current position to FEN",
+        description = "Exports the current chess position as a FEN (Forsyth-Edwards Notation) string."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "FEN string generated",
+                     content = @Content(schema = @Schema(implementation = MessageResponse.class)))
+    })
+    @GetMapping("/exportFEN")
+    public MessageResponse exportFEN() {
+        if (chessGame == null) {
+            return new MessageResponse(requestCount.incrementAndGet(), "");
+        }
+        
+        return new MessageResponse(requestCount.incrementAndGet(), chessGame.exportToFEN());
+    }
 }

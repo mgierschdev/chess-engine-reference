@@ -229,4 +229,64 @@ public class ChessGame {
         a.row += 1;
         a.col += 1;
     }
+
+    /**
+     * Imports a game position from FEN notation.
+     * This resets the current game to the position described by the FEN string.
+     * 
+     * @param fen The FEN string to import
+     * @throws IllegalArgumentException if FEN string is invalid
+     */
+    public void importFromFEN(String fen) {
+        com.backend.util.FENParser.FENParseResult result = com.backend.util.FENParser.parseFEN(fen);
+        
+        // Set board state
+        chessboard.setFromFEN(result);
+        
+        // Set game state
+        turn = result.activeColor;
+        halfMoveClock = result.halfMoveClock;
+        
+        // Clear captured pieces and move history since we're starting from a new position
+        takenWhite.clear();
+        takenBlack.clear();
+        moveHistory.clear();
+        
+        // Update game state (check, checkmate, etc.)
+        Color nextTurn = turn;
+        if (chessboard.isCheckmate(nextTurn)) {
+            gameState = GameState.Checkmate;
+        } else if (chessboard.isStalemate(nextTurn)) {
+            gameState = GameState.DrawByStalemate;
+        } else if (halfMoveClock >= 100) {
+            gameState = GameState.DrawByFiftyMove;
+        } else if (chessboard.isKingInCheck(nextTurn)) {
+            gameState = GameState.Check;
+        } else {
+            gameState = GameState.Free;
+        }
+    }
+    
+    /**
+     * Exports the current position to FEN notation.
+     * 
+     * @return FEN string representing the current position
+     */
+    public String exportToFEN() {
+        int fullMoveNumber = (moveHistory.size() / 2) + 1;
+        
+        return com.backend.util.FENParser.generateFEN(
+            chessboard.getBoard(),
+            turn,
+            chessboard.getWhiteKingMoved(),
+            chessboard.getBlackKingMoved(),
+            chessboard.getWhiteKingsideRookMoved(),
+            chessboard.getWhiteQueensideRookMoved(),
+            chessboard.getBlackKingsideRookMoved(),
+            chessboard.getBlackQueensideRookMoved(),
+            chessboard.getEnPassantTarget(),
+            halfMoveClock,
+            fullMoveNumber
+        );
+    }
 }
