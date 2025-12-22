@@ -5,6 +5,7 @@ import {ChessService} from "@/app/_services/ChessService";
 import {ChessGame} from "@/app/_models/ChessGame";
 import {GameState} from "@/app/_models/enums";
 import MoveHistory from "./MoveHistory";
+import CapturedPieces from "./CapturedPieces";
 
 // Game Service
 let gameService: ChessService = new ChessService();
@@ -74,14 +75,22 @@ export default function RightSidePanel({gameInfoProp, onBotModeChange, onGameInf
                 <MoveHistory moves={gameInfo.moveHistory || []} />
             </div>
 
-            <div
-                className="right-side-panel-item">
-                Black Pieces:
+            <div className="right-side-panel-item" style={{ marginTop: '20px' }}>
+                <strong>Captured Pieces</strong>
             </div>
 
-            <div
-                className="right-side-panel-item">
-                White Pieces:
+            <div className="right-side-panel-item" style={{ marginTop: '10px' }}>
+                <div style={{ marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>
+                    Black Pieces:
+                </div>
+                <CapturedPieces pieces={gameInfo.capturedBlack || []} color="Black" />
+            </div>
+
+            <div className="right-side-panel-item" style={{ marginTop: '10px' }}>
+                <div style={{ marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' }}>
+                    White Pieces:
+                </div>
+                <CapturedPieces pieces={gameInfo.capturedWhite || []} color="White" />
             </div>
         </div>
     );
