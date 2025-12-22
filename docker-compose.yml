@@ -23,7 +23,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://host.docker.internal:8080/
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/
       - NODE_ENV=development
     depends_on:
       - backend
