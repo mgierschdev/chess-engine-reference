@@ -144,6 +144,38 @@ public class ChessController {
         return chessGame.getValidMovesController(position);
     }
 
+    @Operation(
+        summary = "Get move history",
+        description = "Returns the list of all moves made in the current game."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Move history retrieved",
+                     content = @Content(schema = @Schema(implementation = com.backend.models.Move[].class)))
+    })
+    @GetMapping("/moveHistory")
+    public java.util.List<com.backend.models.Move> getMoveHistory() {
+        if (chessGame == null) {
+            return new java.util.ArrayList<>();
+        }
+        return chessGame.getMoveHistory();
+    }
+
+    @Operation(
+        summary = "Export game to PGN",
+        description = "Exports the current game in Portable Game Notation (PGN) format."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "PGN export successful",
+                     content = @Content(schema = @Schema(implementation = String.class)))
+    })
+    @GetMapping("/exportPGN")
+    public String exportPGN() {
+        if (chessGame == null) {
+            return "[Event \"No game in progress\"]\n*";
+        }
+        return chessGame.exportToPGN();
+    }
+
     @GetMapping("/*")
     public MessageResponse defaultAll() {
         return new MessageResponse(requestCount.incrementAndGet(), Log.empty);
