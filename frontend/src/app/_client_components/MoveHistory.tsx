@@ -22,7 +22,7 @@ const MoveHistory: React.FC<MoveHistoryProps> = ({ moves }) => {
         switch (pieceType) {
             case ChessPieceType.King: return 'K';
             case ChessPieceType.Queen: return 'Q';
-            case ChessPieceType.Rook: return 'R';
+            case ChessPieceType.Rock: return 'R';
             case ChessPieceType.Bishop: return 'B';
             case ChessPieceType.Knight: return 'N';
             case ChessPieceType.Pawn: return '';
