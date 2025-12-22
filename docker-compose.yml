@@ -11,12 +11,6 @@ services:
       - CORS_ALLOWED_ORIGIN=http://localhost:3000
     networks:
       - chess-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/chessGame"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
 
   frontend:
     build:
@@ -27,8 +21,7 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8080/
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - chess-network
 

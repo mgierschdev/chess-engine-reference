@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM eclipse-temurin:17-jdk-jammy AS build
 WORKDIR /app
 
 # Copy gradle wrapper and build files
@@ -17,12 +17,10 @@ COPY src src
 RUN ./gradlew build --no-daemon -x test
 
 # Runtime stage
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
-# Install curl for healthchecks
-RUN apk add --no-cache curl
-
+# No extra packages needed for runtime; healthchecks run from compose will not require curl
 # Copy the built JAR from build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 

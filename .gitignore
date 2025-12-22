@@ -1,2 +1,6 @@
 .idea
 e2e-tests/node_modules/
+/chess-engine-core/.gradle/*
+/chess-engine-core/gradle/*
+/chess-engine-core/gradlew
+/chess-engine-core/gradlew.bat
