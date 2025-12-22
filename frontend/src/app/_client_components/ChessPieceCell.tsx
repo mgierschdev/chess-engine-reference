@@ -21,8 +21,10 @@ export default function ChessPieceCell({chessPiece, onCellClick}: any) {
         return className;
     }
 
-    // Get row and col for data attributes
-    const position = getPosition(chessPiece.position);
+    // Get row and col for data attributes (only if position is valid)
+    const position = chessPiece.position > 0 && chessPiece.position <= 64 
+        ? getPosition(chessPiece.position) 
+        : { row: 0, col: 0 };
 
     return (
         <div
