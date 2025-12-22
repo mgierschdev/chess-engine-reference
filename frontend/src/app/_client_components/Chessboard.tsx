@@ -18,7 +18,7 @@
  */
 
 import {ChessService} from "@/app/_services/ChessService";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import ChessPieceCell from "@/app/_client_components/ChessPieceCell";
 import {ChessPieceType, Color, GameState} from "@/app/_models/enums";
 import {ChessPiece} from "@/app/_models/ChessPiece";
@@ -29,15 +29,26 @@ import PromotionModal from "@/app/_client_components/PromotionModal";
 let gameService: ChessService = new ChessService();
 
 export default function Chessboard({gameInfo, isBotMode}: any) {
-    let [chessboard, setChessboard] = useState(gameInfo.chessboard);
-    let chessPieces = printChessBoard();
+    let [chessboard, setChessboard] = useState(gameInfo?.chessboard || []);
     let [allowedPositions, setAllowedPositions ]= useState(new Set());
     let [selectedPiece, setSelectedPiece] = useState(-1);
-    let [playerTurn, setPlayerTurn] = useState(gameInfo.turn);
-    let [gameState, setGameState] = useState(gameInfo.gameState);
+    let [playerTurn, setPlayerTurn] = useState(gameInfo?.turn);
+    let [gameState, setGameState] = useState(gameInfo?.gameState);
     let [showPromotion, setShowPromotion] = useState(false);
     let [promotionMove, setPromotionMove] = useState<{source: Position, target: Position} | null>(null);
     let [isComputerThinking, setIsComputerThinking] = useState(false);
+    let chessPieces = printChessBoard();
+
+    // Reset board state when gameInfo changes (e.g., when game ends/starts)
+    useEffect(() => {
+        if (gameInfo) {
+            setChessboard(gameInfo.chessboard || []);
+            setPlayerTurn(gameInfo.turn);
+            setGameState(gameInfo.gameState);
+            setSelectedPiece(-1);
+            setAllowedPositions(new Set());
+        }
+    }, [gameInfo]);
 
 
     async function onCellClick(chessPiece: ChessPiece) {

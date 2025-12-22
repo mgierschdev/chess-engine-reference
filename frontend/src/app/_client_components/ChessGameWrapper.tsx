@@ -24,6 +24,11 @@ export default function ChessGameWrapper({gameInfo: initialGameInfo}: {gameInfo:
             });
         }
     }, [gameInfo]);
+
+    // Callback to update game info from child components
+    const handleGameInfoUpdate = (newGameInfo: ChessGame) => {
+        setGameInfo(newGameInfo);
+    };
     
     // Show loading state if game info isn't available yet
     if (!gameInfo) {
@@ -46,7 +51,11 @@ export default function ChessGameWrapper({gameInfo: initialGameInfo}: {gameInfo:
             </div>
 
             <div className="right-panel">
-                <RightSidePanel gameInfoProp={gameInfo} onBotModeChange={setIsBotMode} />
+                <RightSidePanel 
+                    gameInfoProp={gameInfo} 
+                    onBotModeChange={setIsBotMode}
+                    onGameInfoUpdate={handleGameInfoUpdate}
+                />
             </div>
         </>
     );

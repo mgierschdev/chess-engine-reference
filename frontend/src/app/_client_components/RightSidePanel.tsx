@@ -8,7 +8,7 @@ import {GameState} from "@/app/_models/enums";
 // Game Service
 let gameService: ChessService = new ChessService();
 
-export default function RightSidePanel({gameInfoProp, onBotModeChange}: any) {
+export default function RightSidePanel({gameInfoProp, onBotModeChange, onGameInfoUpdate}: any) {
 
     const [gameInfo, setGameInfo] = useState(gameInfoProp);
     const [isBotMode, setIsBotMode] = useState(false);
@@ -22,6 +22,11 @@ export default function RightSidePanel({gameInfoProp, onBotModeChange}: any) {
             response = await gameService.startGame();
         }
         setGameInfo(response);
+        
+        // Notify parent component of the update
+        if (onGameInfoUpdate) {
+            onGameInfoUpdate(response);
+        }
     }
 
     function handleBotModeToggle() {
