@@ -3,9 +3,8 @@
 import React from 'react';
 import {ChessService} from "@/app/_services/ChessService";
 import {ChessGame} from "@/app/_models/ChessGame";
-import Chessboard from "@/app/_client_components/Chessboard";
-import RightSidePanel from "@/app/_client_components/RightSidePanel";
 import {metadata} from "@/app/layout";
+import ChessGameWrapper from "@/app/_client_components/ChessGameWrapper";
 
 
 export default async function Home() {
@@ -20,13 +19,7 @@ export default async function Home() {
             <div className="main">
                 <div className="header">{metadata.title}</div>
 
-                <div className="left-panel">
-                    <Chessboard gameInfo={gameInfo}/>
-                </div>
-
-                <div className="right-panel">
-                        <RightSidePanel gameInfoProp={gameInfo} />
-                </div>
+                <ChessGameWrapper gameInfo={gameInfo} />
 
                 <div className="footer"> {metadata.description} - {currentDate.getFullYear()}</div>
             </div>

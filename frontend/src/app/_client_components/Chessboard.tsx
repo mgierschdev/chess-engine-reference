@@ -28,7 +28,7 @@ import PromotionModal from "@/app/_client_components/PromotionModal";
 
 let gameService: ChessService = new ChessService();
 
-export default function Chessboard({gameInfo}: any) {
+export default function Chessboard({gameInfo, isBotMode}: any) {
     let [chessboard, setChessboard] = useState(gameInfo.chessboard);
     let chessPieces = printChessBoard();
     let [allowedPositions, setAllowedPositions ]= useState(new Set());
@@ -37,10 +37,11 @@ export default function Chessboard({gameInfo}: any) {
     let [gameState, setGameState] = useState(gameInfo.gameState);
     let [showPromotion, setShowPromotion] = useState(false);
     let [promotionMove, setPromotionMove] = useState<{source: Position, target: Position} | null>(null);
+    let [isComputerThinking, setIsComputerThinking] = useState(false);
 
 
     async function onCellClick(chessPiece: ChessPiece) {
-        if(gameState === GameState.Checkmate){
+        if(gameState === GameState.Checkmate || isComputerThinking){
             return;
         }
         let clickedPosition = getPosition(chessPiece.position);
@@ -67,6 +68,11 @@ export default function Chessboard({gameInfo}: any) {
             if(moved){
                 gameInfo = await gameService.getChessGame();
                 await updateChessBoard();
+                
+                // If bot mode and it's black's turn, make AI move
+                if (isBotMode && gameInfo.turn === Color.Black && gameState !== GameState.Checkmate) {
+                    await makeComputerMove();
+                }
                 return;
             }else {
                 //console.log("could not move");
@@ -96,10 +102,37 @@ export default function Chessboard({gameInfo}: any) {
             if(moved){
                 gameInfo = await gameService.getChessGame();
                 await updateChessBoard();
+                
+                // If bot mode and it's black's turn, make AI move
+                if (isBotMode && gameInfo.turn === Color.Black && gameState !== GameState.Checkmate) {
+                    await makeComputerMove();
+                }
             }
         }
         setShowPromotion(false);
         setPromotionMove(null);
+    }
+
+    async function makeComputerMove() {
+        setIsComputerThinking(true);
+        
+        // Small delay to show "thinking" state
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        try {
+            const aiMove = await gameService.getAIMove();
+            if (aiMove) {
+                const moved = await gameService.move(aiMove.from, aiMove.to);
+                if (moved) {
+                    gameInfo = await gameService.getChessGame();
+                    await updateChessBoard();
+                }
+            }
+        } catch (error) {
+            console.error("AI move failed:", error);
+        } finally {
+            setIsComputerThinking(false);
+        }
     }
 
     function highlightPosition(positionSet: any) {
@@ -151,6 +184,11 @@ export default function Chessboard({gameInfo}: any) {
     return (
         <>
             {showPromotion && <PromotionModal onSelect={handlePromotion}/>}    
+            {isComputerThinking && (
+                <div className="computer-thinking" data-testid="computer-thinking">
+                    Computer is thinking...
+                </div>
+            )}
             <div className="chessboard-grid">
                 {chessPieces}
             </div>

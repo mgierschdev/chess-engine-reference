@@ -34,6 +34,29 @@ export class ChessService {
         return response && response.chessPiece && response.chessPiece.type == ChessPieceType.Empty;
     }
 
+    public async getAIMove(): Promise<{from: Position, to: Position, score: number} | null> {
+        try {
+            const response = await this.get('aiMove');
+            if (!response || !response.content) {
+                return null;
+            }
+            
+            // Parse the response format: "fromRow,fromCol,toRow,toCol,score"
+            const parts = response.content.split(',');
+            if (parts.length >= 4) {
+                return {
+                    from: { row: parseInt(parts[0]), col: parseInt(parts[1]) },
+                    to: { row: parseInt(parts[2]), col: parseInt(parts[3]) },
+                    score: parts.length > 4 ? parseInt(parts[4]) : 0
+                };
+            }
+            return null;
+        } catch (error) {
+            console.error("Failed to get AI move:", error);
+            return null;
+        }
+    }
+
     private async post(endpoint: any, request: any){
         try {
             const res = await fetch(this.Api.concat(endpoint), {

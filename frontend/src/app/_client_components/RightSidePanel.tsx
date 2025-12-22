@@ -8,9 +8,10 @@ import {GameState} from "@/app/_models/enums";
 // Game Service
 let gameService: ChessService = new ChessService();
 
-export default function RightSidePanel({gameInfoProp}: any) {
+export default function RightSidePanel({gameInfoProp, onBotModeChange}: any) {
 
     const [gameInfo, setGameInfo] = useState(gameInfoProp);
+    const [isBotMode, setIsBotMode] = useState(false);
 
     async function startGame(): Promise<void> {
         let response: ChessGame;
@@ -23,11 +24,32 @@ export default function RightSidePanel({gameInfoProp}: any) {
         setGameInfo(response);
     }
 
+    function handleBotModeToggle() {
+        const newBotMode = !isBotMode;
+        setIsBotMode(newBotMode);
+        if (onBotModeChange) {
+            onBotModeChange(newBotMode);
+        }
+    }
+
     return (
         <div>
             {!gameInfo.gameStarted ?
                 <button onClick={() => startGame()}>Start Game</button> :
                 <button onClick={() => startGame()}>End Game</button>}
+            
+            <div className="right-side-panel-item">
+                <label>
+                    <input 
+                        type="checkbox" 
+                        checked={isBotMode}
+                        onChange={handleBotModeToggle}
+                        data-testid="bot-mode-toggle"
+                    />
+                    {' '}Play vs Computer
+                </label>
+            </div>
+
             <div
                 className="right-side-panel-item">
                 Game State: {gameInfo.gameState}
