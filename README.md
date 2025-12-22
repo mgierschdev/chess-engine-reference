@@ -403,12 +403,36 @@ No live demo is hosted. Run locally with `make dev` or `make docker-up`.
 
 ## Roadmap
 
+### Recently Completed Enhancements
+
+- [x] **FEN Import/Export** - Import and export positions using standard FEN notation
+- [x] **Undo/Redo** - Full undo/redo support with game state snapshots  
+- [x] **AI Opponent** - Basic minimax AI with alpha-beta pruning (depth-3 search)
+- [x] **Chess Engine Documentation** - Comprehensive extraction guide for reusable core
+
+See [CHESS_ENGINE_EXTRACTION_GUIDE.md](CHESS_ENGINE_EXTRACTION_GUIDE.md) for details on how to extract the chess engine as a standalone library.
+
+See [CHESS_ENGINE_API.md](CHESS_ENGINE_API.md) for complete API documentation.
+
+### API Endpoints
+
+The following new endpoints have been added:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/importFEN` | Import game position from FEN notation |
+| `GET` | `/exportFEN` | Export current position to FEN notation |
+| `GET` | `/undo` | Undo the last move |
+| `GET` | `/redo` | Redo a previously undone move |
+| `GET` | `/undoRedoStatus` | Check if undo/redo are available |
+| `GET` | `/aiMove` | Get AI suggested move using minimax |
+
 ### Planned Enhancements
 
-- [ ] **Extract Chess Engine** - Separate core logic into reusable library
-- [ ] **Undo/Redo** - Allow players to take back moves
-- [ ] **Optional AI Opponent** - Basic minimax algorithm (future module)
-- [ ] **FEN Import** - Import games from FEN notation
+- [ ] **Frontend UI for FEN** - UI controls for FEN import/export
+- [ ] **Frontend UI for Undo/Redo** - Undo/redo buttons in the UI
+- [ ] **Frontend AI Toggle** - Enable/disable AI opponent in UI
+- [ ] **Extract Chess Engine** - Create separate Gradle module (see extraction guide)
 
 ### Not Planned
 

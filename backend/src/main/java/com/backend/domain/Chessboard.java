@@ -765,4 +765,82 @@ public class Chessboard {
         }
         return  color == Color.White ? Color.Black : Color.White;
     }
+
+    /**
+     * Sets the board state from a parsed FEN result.
+     * This allows initializing the board from a FEN string.
+     */
+    public void setFromFEN(com.backend.util.FENParser.FENParseResult fenResult) {
+        // Copy board state
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                board[row][col] = fenResult.board[row][col];
+            }
+        }
+        
+        // Set castling rights
+        whiteKingMoved = fenResult.whiteKingMoved;
+        blackKingMoved = fenResult.blackKingMoved;
+        whiteKingsideRookMoved = fenResult.whiteKingsideRookMoved;
+        whiteQueensideRookMoved = fenResult.whiteQueensideRookMoved;
+        blackKingsideRookMoved = fenResult.blackKingsideRookMoved;
+        blackQueensideRookMoved = fenResult.blackQueensideRookMoved;
+        
+        // Set en passant target
+        enPassantTarget = fenResult.enPassantTarget;
+    }
+    
+    /**
+     * Restores the board state from a board array and castling state.
+     * Used for undo/redo functionality.
+     */
+    public void restoreState(ChessPiece[][] boardState, Position enPassant,
+                           boolean whiteKMoved, boolean blackKMoved,
+                           boolean whiteKRMoved, boolean whiteQRMoved,
+                           boolean blackKRMoved, boolean blackQRMoved) {
+        // Copy board state
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                board[row][col] = boardState[row][col];
+            }
+        }
+        
+        // Restore castling rights
+        whiteKingMoved = whiteKMoved;
+        blackKingMoved = blackKMoved;
+        whiteKingsideRookMoved = whiteKRMoved;
+        whiteQueensideRookMoved = whiteQRMoved;
+        blackKingsideRookMoved = blackKRMoved;
+        blackQueensideRookMoved = blackQRMoved;
+        
+        // Restore en passant target
+        enPassantTarget = enPassant;
+    }
+    
+    /**
+     * Gets castling rights for FEN export.
+     */
+    public boolean getWhiteKingMoved() {
+        return whiteKingMoved;
+    }
+    
+    public boolean getBlackKingMoved() {
+        return blackKingMoved;
+    }
+    
+    public boolean getWhiteKingsideRookMoved() {
+        return whiteKingsideRookMoved;
+    }
+    
+    public boolean getWhiteQueensideRookMoved() {
+        return whiteQueensideRookMoved;
+    }
+    
+    public boolean getBlackKingsideRookMoved() {
+        return blackKingsideRookMoved;
+    }
+    
+    public boolean getBlackQueensideRookMoved() {
+        return blackQueensideRookMoved;
+    }
 }

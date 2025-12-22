@@ -200,4 +200,146 @@ public class ChessController {
         chessGameResponse.capturedWhite = chessGame.getCaptured(Color.White);
         chessGameResponse.gameStarted = true;
     }
+
+    @Operation(
+        summary = "Import game position from FEN",
+        description = "Imports a chess position from FEN (Forsyth-Edwards Notation) string. This resets the current game to the specified position."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Position imported successfully",
+                     content = @Content(schema = @Schema(implementation = ChessGameResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid FEN string",
+                     content = @Content(schema = @Schema(implementation = MessageResponse.class)))
+    })
+    @PostMapping("/importFEN")
+    public Object importFEN(@RequestBody String fen) {
+        if (chessGame == null) {
+            return new MessageResponse(requestCount.incrementAndGet(), "Game not started. Please start a game first.");
+        }
+        
+        try {
+            chessGame.importFromFEN(fen);
+            SetChessResponse();
+            chessGameResponse.content = "Position imported from FEN successfully";
+            return chessGameResponse;
+        } catch (IllegalArgumentException e) {
+            return new MessageResponse(requestCount.incrementAndGet(), "Invalid FEN string: " + e.getMessage());
+        }
+    }
+
+    @Operation(
+        summary = "Export current position to FEN",
+        description = "Exports the current chess position as a FEN (Forsyth-Edwards Notation) string."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "FEN string generated",
+                     content = @Content(schema = @Schema(implementation = MessageResponse.class)))
+    })
+    @GetMapping("/exportFEN")
+    public MessageResponse exportFEN() {
+        if (chessGame == null) {
+            return new MessageResponse(requestCount.incrementAndGet(), "");
+        }
+        
+        return new MessageResponse(requestCount.incrementAndGet(), chessGame.exportToFEN());
+    }
+
+    @Operation(
+        summary = "Undo last move",
+        description = "Undoes the last move and restores the previous game state."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Move undone successfully or nothing to undo",
+                     content = @Content(schema = @Schema(implementation = ChessGameResponse.class)))
+    })
+    @GetMapping("/undo")
+    public ChessGameResponse undo() {
+        if (chessGame == null) {
+            chessGameResponse.content = "Game not started";
+            return chessGameResponse;
+        }
+        
+        if (chessGame.undo()) {
+            SetChessResponse();
+            chessGameResponse.content = "Move undone";
+        } else {
+            SetChessResponse();
+            chessGameResponse.content = "Nothing to undo";
+        }
+        
+        return chessGameResponse;
+    }
+
+    @Operation(
+        summary = "Redo previously undone move",
+        description = "Redoes the last undone move."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Move redone successfully or nothing to redo",
+                     content = @Content(schema = @Schema(implementation = ChessGameResponse.class)))
+    })
+    @GetMapping("/redo")
+    public ChessGameResponse redo() {
+        if (chessGame == null) {
+            chessGameResponse.content = "Game not started";
+            return chessGameResponse;
+        }
+        
+        if (chessGame.redo()) {
+            SetChessResponse();
+            chessGameResponse.content = "Move redone";
+        } else {
+            SetChessResponse();
+            chessGameResponse.content = "Nothing to redo";
+        }
+        
+        return chessGameResponse;
+    }
+
+    @Operation(
+        summary = "Check undo/redo availability",
+        description = "Returns whether undo and redo operations are currently available."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Undo/redo status returned")
+    })
+    @GetMapping("/undoRedoStatus")
+    public MessageResponse undoRedoStatus() {
+        if (chessGame == null) {
+            return new MessageResponse(requestCount.incrementAndGet(), "false,false");
+        }
+        
+        String status = chessGame.canUndo() + "," + chessGame.canRedo();
+        return new MessageResponse(requestCount.incrementAndGet(), status);
+    }
+
+    @Operation(
+        summary = "Get AI suggested move",
+        description = "Uses minimax algorithm to find the best move for the current player. Returns the move in format 'fromRow,fromCol,toRow,toCol,score'."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "AI move suggestion returned",
+                     content = @Content(schema = @Schema(implementation = MessageResponse.class)))
+    })
+    @GetMapping("/aiMove")
+    public MessageResponse getAIMove() {
+        if (chessGame == null) {
+            return new MessageResponse(requestCount.incrementAndGet(), "Game not started");
+        }
+        
+        try {
+            com.backend.ai.ChessAI.AIMove aiMove = com.backend.ai.ChessAI.findBestMove(chessGame);
+            
+            if (aiMove == null) {
+                return new MessageResponse(requestCount.incrementAndGet(), "No legal moves available");
+            }
+            
+            // Format: fromRow,fromCol,toRow,toCol,score
+            String moveStr = aiMove.from.row + "," + aiMove.from.col + "," + 
+                           aiMove.to.row + "," + aiMove.to.col + "," + aiMove.score;
+            return new MessageResponse(requestCount.incrementAndGet(), moveStr);
+        } catch (Exception e) {
+            return new MessageResponse(requestCount.incrementAndGet(), "Error calculating AI move: " + e.getMessage());
+        }
+    }
 }
