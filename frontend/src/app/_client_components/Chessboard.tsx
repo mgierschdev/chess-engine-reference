@@ -18,7 +18,7 @@
  */
 
 import {ChessService} from "@/app/_services/ChessService";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import ChessPieceCell from "@/app/_client_components/ChessPieceCell";
 import {ChessPieceType, Color, GameState} from "@/app/_models/enums";
 import {ChessPiece} from "@/app/_models/ChessPiece";
@@ -28,19 +28,30 @@ import PromotionModal from "@/app/_client_components/PromotionModal";
 
 let gameService: ChessService = new ChessService();
 
-export default function Chessboard({gameInfo}: any) {
-    let [chessboard, setChessboard] = useState(gameInfo.chessboard);
-    let chessPieces = printChessBoard();
+export default function Chessboard({gameInfo, isBotMode, onGameInfoUpdate}: any) {
+    let [chessboard, setChessboard] = useState(gameInfo?.chessboard || []);
     let [allowedPositions, setAllowedPositions ]= useState(new Set());
     let [selectedPiece, setSelectedPiece] = useState(-1);
-    let [playerTurn, setPlayerTurn] = useState(gameInfo.turn);
-    let [gameState, setGameState] = useState(gameInfo.gameState);
+    let [playerTurn, setPlayerTurn] = useState(gameInfo?.turn);
+    let [gameState, setGameState] = useState(gameInfo?.gameState);
     let [showPromotion, setShowPromotion] = useState(false);
     let [promotionMove, setPromotionMove] = useState<{source: Position, target: Position} | null>(null);
+    let [isComputerThinking, setIsComputerThinking] = useState(false);
+
+    // Reset board state when gameInfo changes (e.g., when game ends/starts)
+    useEffect(() => {
+        if (gameInfo) {
+            setChessboard(gameInfo.chessboard || []);
+            setPlayerTurn(gameInfo.turn);
+            setGameState(gameInfo.gameState);
+            setSelectedPiece(-1);
+            setAllowedPositions(new Set());
+        }
+    }, [gameInfo]);
 
 
     async function onCellClick(chessPiece: ChessPiece) {
-        if(gameState === GameState.Checkmate){
+        if(gameState === GameState.Checkmate || isComputerThinking){
             return;
         }
         let clickedPosition = getPosition(chessPiece.position);
@@ -65,8 +76,16 @@ export default function Chessboard({gameInfo}: any) {
             let moved = await gameService.move(source, clickedPosition);
 
             if(moved){
-                gameInfo = await gameService.getChessGame();
+                // Update the board state immediately after move
                 await updateChessBoard();
+                
+                // Get the latest game info for bot mode check
+                const latestGame = await gameService.getChessGame();
+                
+                // If bot mode and it's black's turn, make AI move
+                if (isBotMode && latestGame.turn === Color.Black && latestGame.gameState !== GameState.Checkmate) {
+                    await makeComputerMove();
+                }
                 return;
             }else {
                 //console.log("could not move");
@@ -94,12 +113,40 @@ export default function Chessboard({gameInfo}: any) {
         if(promotionMove){
             let moved = await gameService.move(promotionMove.source, promotionMove.target, type);
             if(moved){
-                gameInfo = await gameService.getChessGame();
                 await updateChessBoard();
+                
+                // Get the latest game info for bot mode check
+                const latestGame = await gameService.getChessGame();
+                
+                // If bot mode and it's black's turn, make AI move
+                if (isBotMode && latestGame.turn === Color.Black && latestGame.gameState !== GameState.Checkmate) {
+                    await makeComputerMove();
+                }
             }
         }
         setShowPromotion(false);
         setPromotionMove(null);
+    }
+
+    async function makeComputerMove() {
+        setIsComputerThinking(true);
+        
+        // Small delay to show "thinking" state
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        try {
+            const aiMove = await gameService.getAIMove();
+            if (aiMove) {
+                const moved = await gameService.move(aiMove.from, aiMove.to);
+                if (moved) {
+                    await updateChessBoard();
+                }
+            }
+        } catch (error) {
+            console.error("AI move failed:", error);
+        } finally {
+            setIsComputerThinking(false);
+        }
     }
 
     function highlightPosition(positionSet: any) {
@@ -134,6 +181,11 @@ export default function Chessboard({gameInfo}: any) {
                 }
             }
         ));
+        
+        // Notify parent component of the updated game state
+        if (onGameInfoUpdate) {
+            onGameInfoUpdate(game);
+        }
     }
 
     //1 2 3 4 5 6 7 8 9 10 .... 64  % 8 = col
@@ -151,8 +203,13 @@ export default function Chessboard({gameInfo}: any) {
     return (
         <>
             {showPromotion && <PromotionModal onSelect={handlePromotion}/>}    
+            {isComputerThinking && (
+                <div className="computer-thinking" data-testid="computer-thinking">
+                    Computer is thinking...
+                </div>
+            )}
             <div className="chessboard-grid">
-                {chessPieces}
+                {printChessBoard()}
             </div>
         </>
     );

@@ -31,7 +31,43 @@ export class ChessService {
             promotionType: promotionType
         };
         const response = await this.post('move', request);
-        return response && response.chessPiece && response.chessPiece.type == ChessPieceType.Empty;
+        // Move is successful if we get a valid response
+        // The response.chessPiece tells us what was at the target square before the move
+        // For regular moves it's Empty, for captures it's the captured piece
+        // Invalid moves return chessPiece with type "Invalid"
+        if (!response || !response.chessPiece) {
+            console.error("Move failed: Invalid response", response);
+            return false;
+        }
+        
+        const isValid = response.chessPiece.type !== ChessPieceType.Invalid;
+        if (!isValid) {
+            console.log("Move rejected by backend:", response.message);
+        }
+        return isValid;
+    }
+
+    public async getAIMove(): Promise<{from: Position, to: Position, score: number} | null> {
+        try {
+            const response = await this.get('aiMove');
+            if (!response || !response.content) {
+                return null;
+            }
+            
+            // Parse the response format: "fromRow,fromCol,toRow,toCol,score"
+            const parts = response.content.split(',');
+            if (parts.length >= 4) {
+                return {
+                    from: { row: parseInt(parts[0]), col: parseInt(parts[1]) },
+                    to: { row: parseInt(parts[2]), col: parseInt(parts[3]) },
+                    score: parts.length > 4 ? parseInt(parts[4]) : 0
+                };
+            }
+            return null;
+        } catch (error) {
+            console.error("Failed to get AI move:", error);
+            return null;
+        }
     }
 
     private async post(endpoint: any, request: any){
