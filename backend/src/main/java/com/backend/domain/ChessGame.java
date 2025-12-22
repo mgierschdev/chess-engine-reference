@@ -182,6 +182,14 @@ public class ChessGame {
     public ChessPieceResponse[] getChessboard() {
         return Chessboard.GetArrayBoard(chessboard.getBoard());
     }
+    
+    /**
+     * Gets the underlying Chessboard instance.
+     * Used by AI for move generation.
+     */
+    public Chessboard getChessboardInternal() {
+        return chessboard;
+    }
 
     public List<Move> getMoveHistory() {
         return new ArrayList<>(moveHistory);

@@ -312,4 +312,34 @@ public class ChessController {
         String status = chessGame.canUndo() + "," + chessGame.canRedo();
         return new MessageResponse(requestCount.incrementAndGet(), status);
     }
+
+    @Operation(
+        summary = "Get AI suggested move",
+        description = "Uses minimax algorithm to find the best move for the current player. Returns the move in format 'fromRow,fromCol,toRow,toCol,score'."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "AI move suggestion returned",
+                     content = @Content(schema = @Schema(implementation = MessageResponse.class)))
+    })
+    @GetMapping("/aiMove")
+    public MessageResponse getAIMove() {
+        if (chessGame == null) {
+            return new MessageResponse(requestCount.incrementAndGet(), "Game not started");
+        }
+        
+        try {
+            com.backend.ai.ChessAI.AIMove aiMove = com.backend.ai.ChessAI.findBestMove(chessGame);
+            
+            if (aiMove == null) {
+                return new MessageResponse(requestCount.incrementAndGet(), "No legal moves available");
+            }
+            
+            // Format: fromRow,fromCol,toRow,toCol,score
+            String moveStr = aiMove.from.row + "," + aiMove.from.col + "," + 
+                           aiMove.to.row + "," + aiMove.to.col + "," + aiMove.score;
+            return new MessageResponse(requestCount.incrementAndGet(), moveStr);
+        } catch (Exception e) {
+            return new MessageResponse(requestCount.incrementAndGet(), "Error calculating AI move: " + e.getMessage());
+        }
+    }
 }
