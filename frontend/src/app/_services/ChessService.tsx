@@ -31,7 +31,9 @@ export class ChessService {
             promotionType: promotionType
         };
         const response = await this.post('move', request);
-        return response && response.chessPiece && response.chessPiece.type == ChessPieceType.Empty;
+        // Move is successful if we get a valid response with chessPiece property
+        // The chessPiece represents what was at the target square (Empty for regular moves, or the captured piece for captures)
+        return response && response.chessPiece != null;
     }
 
     public async getAIMove(): Promise<{from: Position, to: Position, score: number} | null> {
