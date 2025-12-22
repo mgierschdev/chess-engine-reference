@@ -66,8 +66,11 @@ public class ChessAI {
             // Save current state
             String fenBeforeMove = game.exportToFEN();
             
-            // Make the move
-            ChessPiece result = game.MoveController(move.from, move.to);
+            // Make the move (create new positions to avoid modification)
+            ChessPiece result = game.MoveController(
+                new Position(move.from.row, move.from.col), 
+                new Position(move.to.row, move.to.col)
+            );
             
             if (result.type() != ChessPieceType.Invalid) {
                 // Evaluate this position
@@ -79,7 +82,11 @@ public class ChessAI {
                 // Update best move if this is better
                 if (score > bestScore || (score == bestScore && random.nextBoolean())) {
                     bestScore = score;
-                    bestMove = new AIMove(move.from, move.to, score);
+                    bestMove = new AIMove(
+                        new Position(move.from.row, move.from.col),
+                        new Position(move.to.row, move.to.col),
+                        score
+                    );
                 }
                 
                 alpha = Math.max(alpha, score);
@@ -128,7 +135,10 @@ public class ChessAI {
         if (isMaximizing) {
             int maxEval = Integer.MIN_VALUE;
             for (AIMove move : legalMoves) {
-                ChessPiece result = game.MoveController(move.from, move.to);
+                ChessPiece result = game.MoveController(
+                    new Position(move.from.row, move.from.col),
+                    new Position(move.to.row, move.to.col)
+                );
                 if (result.type() != ChessPieceType.Invalid) {
                     int eval = minimax(game, depth - 1, alpha, beta, false, aiColor);
                     game.undo();
@@ -144,7 +154,10 @@ public class ChessAI {
         } else {
             int minEval = Integer.MAX_VALUE;
             for (AIMove move : legalMoves) {
-                ChessPiece result = game.MoveController(move.from, move.to);
+                ChessPiece result = game.MoveController(
+                    new Position(move.from.row, move.from.col),
+                    new Position(move.to.row, move.to.col)
+                );
                 if (result.type() != ChessPieceType.Invalid) {
                     int eval = minimax(game, depth - 1, alpha, beta, true, aiColor);
                     game.undo();
@@ -172,10 +185,11 @@ public class ChessAI {
                 ChessPiece piece = board[row][col];
                 if (piece.color() == color) {
                     Position from = new Position(row + 1, col + 1); // Add offset for controller
-                    Position[] validMoves = game.getValidMovesController(from);
+                    Position[] validMoves = game.getValidMovesController(new Position(row + 1, col + 1));
                     
                     for (Position to : validMoves) {
-                        moves.add(new AIMove(from, to, 0));
+                        // Create new Position for from to avoid modification issues
+                        moves.add(new AIMove(new Position(row + 1, col + 1), to, 0));
                     }
                 }
             }
