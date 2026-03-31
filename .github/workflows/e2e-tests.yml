@@ -71,7 +71,7 @@ jobs:
     # Upload screenshots on failure or success
     - name: Upload screenshots
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: e2e-screenshots
         path: /tmp/qa-screenshot-*.png
@@ -80,7 +80,7 @@ jobs:
     # Upload test logs on failure
     - name: Upload logs on failure
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: e2e-logs
         path: e2e-tests/*.log
